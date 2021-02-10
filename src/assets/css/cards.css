@@ -1,0 +1,572 @@
+h3 {
+  color: rgb(167, 147, 35);
+}
+h2 {
+  color: rgb(167, 61, 35);
+}
+
+/* Spinners */
+.spinners {
+  position: fixed;
+  width: 10vmin;
+  pointer-events: none;
+}
+.top-left{
+  left: 10vmin;
+  top: 5vmin;
+}
+.top-right{
+  right: 10vmin;
+  top: 5vmin;
+}
+.bottom-left{
+  left: 10vmin;
+  bottom: 5vmin;
+}
+.bottom-right{
+  right: 10vmin;
+  bottom: 5vmin;
+}
+
+/* Cards */
+.container {
+  background-image: url("../images/backgroundstress.jpg");
+  background-size: cover;
+  /* background-color: #282c34; */
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  overflow: hidden;
+  position: absolute;
+}
+.paused:after
+{
+    content: '';
+    position: absolute;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+    background:rgba(0,0,0,0.9);
+}
+.paused {
+  position: fixed;
+  cursor: pointer;
+  height: 100%;
+  width: 100%;
+  z-index:11;
+}
+.pausedtext {
+  color: white;
+  font-size: 16px;
+  z-index: 1;
+  position: fixed;
+  text-align: center;
+  /* width: 100vh; */
+  /* line-height: 25px; */
+  left: 16%;
+  top: 2vh;
+  transform: translateX(-10%);
+
+}
+.row {
+  height: 33%;
+}
+.deckcard {
+  width: 70px;
+  height: auto;
+}
+.card-element {
+  border: 2px dashed #D9D9D9;
+  border-radius: 5px;
+  margin: 4vmin 3vmin;
+  padding: 1em;
+  /* text-align: center; */
+  display: inline-block;
+  min-width: 70px;
+  min-height: 111px;
+  vertical-align: middle!important;
+}
+.my > img:hover {
+  -webkit-animation: wiggle 0.3s 0s infinite ease-in;
+  animation: wiggle 0.3s 0s infinite ease-in;
+  cursor: pointer;
+  opacity: .6;
+}
+.card-element .target {
+  border: 2px solid black;
+  border-radius: 1px;
+}
+.sidedecks {
+  position: relative;
+}
+.deck {
+  margin: 5vmin 15vmin;
+}
+.cardmenu {
+  position: absolute;
+  right: 1vh;
+  bottom: 1vh;
+}
+button:hover {
+  cursor: pointer;
+}
+.countdown::before {
+  text-align: center;
+  top: 25%;
+  left: 0;
+  width: 100%;
+  font-size: 28vh;
+  position: absolute;
+  color: white;
+  content: "READY";
+  -webkit-animation: pulsate 3s ease-out;
+  animation: pulsate 3s ease-out;
+  z-index: 12;
+}
+.btnpressed {
+  background: #e5e5e5;
+  -webkit-box-shadow: inset 0px 0px 5px #c1c1c1;
+     -moz-box-shadow: inset 0px 0px 5px #c1c1c1;
+          box-shadow: inset 0px 0px 5px #c1c1c1;
+   outline: none;
+}
+.eventmsg {
+  text-align: center;
+  top: 25vh;
+  left: 0;
+  width: 100%;
+  font-size: 11vh;
+  position: absolute;
+  color: white;
+  animation: fadeIn ease 2.5s;
+  -webkit-animation: fadeIn ease 2.5s;
+  -moz-animation: fadeIn ease 2.5s;
+  -o-animation: fadeIn ease 2.5s;
+  -ms-animation: fadeIn ease 2.5s;
+  z-index: 11;
+}
+
+.stressBtn {
+  top: 40%;
+  left:0;
+  right:0;
+  margin-left:auto;
+  margin-right:auto;
+  width: 5%;
+  height: 7%;
+  font-size: 5vh;
+  position: absolute;
+  color: rgb(255, 217, 0);
+  font-weight: 700;
+  padding: 1em;
+  -webkit-animation: fadeIn ease 0.3s, wiggle 0.2s 0s infinite ease-in;
+  animation: fadeIn ease 0.3s, wiggle 0.2s 0s infinite ease-in;
+  -moz-animation: fadeIn ease 0.3s;
+  -o-animation: fadeIn ease 0.3s;
+  -ms-animation: fadeIn ease 0.3s;
+  z-index: 10;
+}
+
+.stressBtn:hover {
+  cursor: grab;
+}
+
+.deck-amount {
+  color: rgb(255, 217, 0);
+  font-weight: 500;
+  font-size: 16px;
+  left: 0;
+  right: 0;
+  top: -4vh;
+  /* top: 48%;
+  transform: translateY(-50%); */
+  position: absolute;
+
+}
+
+.startbtn {
+  text-align: center;
+  width: 250px;
+  left: 50%;
+  top: 170px;
+  transform: translateX(-50%);
+  position: absolute;
+  animation: fadeIn ease 10s;
+  -webkit-animation: fadeIn ease 10s;
+  -moz-animation: fadeIn ease 10s;
+  -o-animation: fadeIn ease 10s;
+  -ms-animation: fadeIn ease 10s;
+}
+div .startbtndiv {
+  display: flex;
+  /* height: 100vh; */
+  align-items: center;
+  justify-content: center;
+  flex-flow: column;
+}
+div .startbtn a {
+    width: 100%;
+    background-color: rgba(37, 35, 35, 0.842);
+    /* max-width: 240px; */
+    height: 54px;
+    padding: 8px;
+    /* font-size: 1.28rem; */
+    font-weight: 900;
+    color: #ff4655;
+    text-align: center;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 0 0 1px inset rgba(236, 232, 225, 0.3);
+    position: relative;
+    margin: 10px 0;
+}
+.startbtn a:hover {
+  cursor: pointer;
+}
+.startbtn a:after, .startbtn a:before {
+  content: "";
+  width: 1px;
+  position: absolute;
+  height: 8px;
+  background: #0f1923;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.startbtn a:before {
+  right: 0;
+  left: initial;
+}
+.startbtn a p {
+  margin: 0;
+  height: 54px;
+  line-height: 54px;
+  box-sizing: border-box;
+  z-index: 1;
+  left: 0;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.startbtn a p span.base {
+  box-sizing: border-box;
+  position: absolute;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  border: 1px solid #ff4655;
+}
+.startbtn a p span.base:before {
+  content: "";
+  width: 2px;
+  height: 2px;
+  left: -1px;
+  top: -1px;
+  background:  #0f1923;
+  position: absolute;
+  transition: 0.3s ease-out all;
+}
+.startbtn a p span.bg {
+  left: -5%;
+  position: absolute;
+  background: #ff4655;
+  width: 0;
+  height: 100%;
+  z-index: 3;
+  transition: 0.3s ease-out all;
+  transform: skewX(-10deg);
+}
+.startbtn a p span.text {
+  z-index: 4;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.startbtn a p span.text:after {
+  content: "";
+  width: 4px;
+  height: 4px;
+  right: 0;
+  bottom: 0;
+  background: #0f1923;
+  position: absolute;
+  transition: 0.3s ease-out all;
+  z-index: 5;
+}
+.startbtn a p:hover {
+  color: #ece8e1;
+}
+.startbtn a p:hover span.bg {
+  width: 110%;
+}
+.startbtn a p:hover span.text:after {
+  background: #ece8e1;
+}
+
+@media (min-width: 600px) and (max-width: 800px) {
+  .deckcard {
+    width: 60px;
+  }
+  .card-element {
+    margin: 4vmin 3vmin;
+    padding: 0.7em;
+    min-width: 60px;
+    min-height: 95px;
+  }
+  .deck-amount {
+    font-size: 15px;
+  }
+  .countdown::before {
+    font-size: 12vh;
+  }
+  .eventmsg {
+    font-size: 8vh;
+  }
+}
+
+@media (min-width: 400px) and (max-width: 600px) {
+  .deckcard {
+    width: 53px;
+  }
+  .card-element {
+    margin: 4vmin 3vmin;
+    padding: 0.4em;
+    min-width: 53px;
+    min-height: 84px;
+  }
+  .deck-amount {
+    font-size: 13px;
+  }
+  .countdown::before {
+    font-size: 9vh;
+  }
+  .eventmsg {
+    font-size: 4.5vh;
+  }
+}
+
+@media (max-width: 400px) {
+  .deckcard {
+    width: 40px;
+  }
+  .card-element {
+    margin: 4vmin 3vmin;
+    padding: 0.3em;
+    min-width: 40px;
+    min-height: 65px;
+  }
+  .deck-amount {
+    font-size: 10px;
+  }
+  .countdown::before {
+    font-size: 6vh;
+  }
+  .eventmsg {
+    font-size: 3vh;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
+}
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
+}
+@-moz-keyframes fadeIn {
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
+}
+
+@-o-keyframes fadeIn {
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
+}
+
+@-ms-keyframes fadeIn {
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
+}
+
+@keyframes pulsate {
+  0% {
+    content: "READY";
+    opacity: 0.5;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  10% {
+    content: "READY";
+    opacity: 1.0;
+    -webkit-transform: scale(2.0);
+    transform: scale(2.0);
+  }
+  29% {
+    content: "READY";
+    opacity: 0.5;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  30% {
+    content: "SET";
+    opacity: 0.5;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  45% {
+    content: "SET";
+    opacity: 1.0;
+    -webkit-transform: scale(2.0);
+    transform: scale(2.0);
+  }
+  69% {
+    content: "SET";
+    opacity: 0.5;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  70% {
+    content: "GO";
+    opacity: 1;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  100% {
+    content: "GO";
+    opacity: 0;
+    -webkit-transform: scale(8.0);
+    transform: scale(8.0);
+  }
+}
+
+@-webkit-keyframes pulsate {
+  0% {
+    content: "READY";
+    opacity: 0.5;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  10% {
+    content: "READY";
+    opacity: 1.0;
+    -webkit-transform: scale(2.0);
+    transform: scale(2.0);
+  }
+  29% {
+    content: "READY";
+    opacity: 0.5;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  30% {
+    content: "SET";
+    opacity: 0.5;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  45% {
+    content: "SET";
+    opacity: 1.0;
+    -webkit-transform: scale(2.0);
+    transform: scale(2.0);
+  }
+  69% {
+    content: "SET";
+    opacity: 0.5;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  70% {
+    content: "GO";
+    opacity: 1;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  100% {
+    content: "GO";
+    opacity: 0;
+    -webkit-transform: scale(8.0);
+    transform: scale(8.0);
+  }
+}
+
+@keyframes wiggle {
+  0% {
+    transform: rotate(-2deg);
+  }
+  25% {
+    transform: rotate(2deg);
+  }
+  75% {
+    transform: rotate(-2deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .spinners {
+    animation: App-logo-spin infinite 1s linear;
+  }
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.gu-mirror {
+  position: fixed !important;
+  margin: 0 !important;
+  z-index: 9999 !important;
+  padding: 1em;
+}
+.gu-hide {
+  display: none !important;
+}
+.gu-unselectable {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+.gu-transit {
+  opacity: 0.5;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  filter: alpha(opacity=50);
+}
+.gu-mirror {
+  opacity: 0.5;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  filter: alpha(opacity=50);
+}
