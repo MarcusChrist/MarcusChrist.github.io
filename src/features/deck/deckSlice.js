@@ -67,8 +67,8 @@ export default function deckReducer(state = initialState, action) {
             return {
                 ...state,
                 score: {
-                    myScore: state.score.myScore += action.myScore,
-                    yourScore: state.score.yourScore += action.yourScore,
+                    myScore: state.score.myScore += action.score.myScore,
+                    yourScore: state.score.yourScore += action.score.yourScore,
                 }
             }
         default:

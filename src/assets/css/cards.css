@@ -1,8 +1,14 @@
-h3 {
-  color: rgb(167, 147, 35);
+
+
+h1 {
+  color: rgb(196, 171, 33);
 }
 h2 {
   color: rgb(167, 61, 35);
+}
+h3 {
+  color: rgb(167, 147, 35);
+  line-height: 0px;
 }
 
 /* Spinners */
@@ -39,15 +45,15 @@ h2 {
   overflow: hidden;
   position: absolute;
 }
-.paused:after
-{
-    content: '';
-    position: absolute;
-    left:0;
-    right:0;
-    top:0;
-    bottom:0;
-    background:rgba(0,0,0,0.9);
+.paused:after {
+  content: '';
+  position: absolute;
+  left:0;
+  right:0;
+  top:0;
+  bottom:0;
+  background:rgba(0,0,0,0.9);
+  overflow: hidden;
 }
 .paused {
   position: fixed;
@@ -55,6 +61,7 @@ h2 {
   height: 100%;
   width: 100%;
   z-index:11;
+  overflow: hidden;
 }
 .pausedtext {
   color: white;
@@ -64,28 +71,37 @@ h2 {
   text-align: center;
   /* width: 100vh; */
   /* line-height: 25px; */
+  height: 100%;
   left: 16%;
   top: 2vh;
   transform: translateX(-10%);
-
+  overflow-y: scroll;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
 }
 .row {
   height: 33%;
 }
 .deckcard {
-  width: 70px;
+  width: 80px;
   height: auto;
 }
 .card-element {
-  border: 2px dashed #D9D9D9;
-  border-radius: 5px;
-  margin: 4vmin 3vmin;
-  padding: 1em;
+  margin: 2vmin 1.5vmin;
+  padding: 0.5em;
   /* text-align: center; */
   display: inline-block;
-  min-width: 70px;
-  min-height: 111px;
+  min-width: 80px;
+  min-height: 126px;
   vertical-align: middle!important;
+}
+.my {
+  border: 2px solid black;
+  border-radius: 1px;
 }
 .my > img:hover {
   -webkit-animation: wiggle 0.3s 0s infinite ease-in;
@@ -93,9 +109,13 @@ h2 {
   cursor: pointer;
   opacity: .6;
 }
-.card-element .target {
-  border: 2px solid black;
-  border-radius: 1px;
+.target {
+  border: 2px dashed #D9D9D9;
+  border-radius: 5px;
+}
+.movable {
+  position: absolute;
+  margin-left: -40px;
 }
 .sidedecks {
   position: relative;
@@ -133,7 +153,7 @@ button:hover {
 }
 .eventmsg {
   text-align: center;
-  top: 25vh;
+  top: 23vh;
   left: 0;
   width: 100%;
   font-size: 11vh;
@@ -165,7 +185,7 @@ button:hover {
   -moz-animation: fadeIn ease 0.3s;
   -o-animation: fadeIn ease 0.3s;
   -ms-animation: fadeIn ease 0.3s;
-  z-index: 10;
+  z-index: 13;
 }
 
 .stressBtn:hover {
@@ -189,7 +209,7 @@ button:hover {
   text-align: center;
   width: 250px;
   left: 50%;
-  top: 170px;
+  top: 23.5%;
   transform: translateX(-50%);
   position: absolute;
   animation: fadeIn ease 10s;
@@ -207,7 +227,7 @@ div .startbtndiv {
 }
 div .startbtn a {
     width: 100%;
-    background-color: rgba(37, 35, 35, 0.842);
+    background-color: rgba(37, 35, 35, 1);
     /* max-width: 240px; */
     height: 54px;
     padding: 8px;
@@ -307,15 +327,14 @@ div .startbtn a {
   background: #ece8e1;
 }
 
-@media (min-width: 600px) and (max-width: 800px) {
-  .deckcard {
-    width: 60px;
+@media (min-width: 800px) and (max-width: 1080px) {
+  .deck {
+    margin: 5vmin 10vmin;
   }
-  .card-element {
-    margin: 4vmin 3vmin;
-    padding: 0.7em;
-    min-width: 60px;
-    min-height: 95px;
+}
+@media (min-width: 600px) and (max-width: 800px) {
+  .deck {
+    margin: 5vmin 7vmin;
   }
   .deck-amount {
     font-size: 15px;
@@ -330,13 +349,13 @@ div .startbtn a {
 
 @media (min-width: 400px) and (max-width: 600px) {
   .deckcard {
-    width: 53px;
+    width: 70px;
   }
   .card-element {
-    margin: 4vmin 3vmin;
-    padding: 0.4em;
-    min-width: 53px;
-    min-height: 84px;
+    margin: 2vmin 1.5vmin;
+    padding: 0.3em;
+    min-width: 70px;
+    min-height: 110px;
   }
   .deck-amount {
     font-size: 13px;
@@ -347,17 +366,20 @@ div .startbtn a {
   .eventmsg {
     font-size: 4.5vh;
   }
+  .movable {
+    margin-left: -35.5px;
+  }
 }
 
 @media (max-width: 400px) {
   .deckcard {
-    width: 40px;
+    width: 53px;
   }
   .card-element {
-    margin: 4vmin 3vmin;
-    padding: 0.3em;
-    min-width: 40px;
-    min-height: 65px;
+    margin: 2vmin 1.5vmin;
+    padding: 0.2em;
+    min-width: 53px;
+    min-height: 84px;
   }
   .deck-amount {
     font-size: 10px;
@@ -367,6 +389,9 @@ div .startbtn a {
   }
   .eventmsg {
     font-size: 3vh;
+  }
+  .movable {
+    margin-left: -27px;
   }
 }
 

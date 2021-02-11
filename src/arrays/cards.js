@@ -56,8 +56,14 @@ export const initialState = {
   myDeck: [],
   yourDeck: [],
   sloppy: [],
-  cards: []
+  cards: [],
+  score: {myScore: 0, yourScore: 0}
 };
+
+export const initialStateLifted = {
+  startPos: {x: 0, y: 0},
+  endPos: {x: 0, y: 0}
+}
 
 export const initiateCards = [
   {

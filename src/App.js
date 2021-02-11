@@ -1,9 +1,10 @@
 import React from 'react';
 
 import './assets/css/cards.css';
-import { unknownCard, initiateCards, deckArray, initialState } from './arrays/cards';
+import { unknownCard, initialState } from './arrays/cards';
 import { shuffle } from './views/stress/utils';
 import deckReducer from './features/deck/deckSlice';
+import { MovableCard } from './views/stress/movableCard';
 
 function App() {
   const [deck, dispatch] = React.useReducer(deckReducer, initialState);
@@ -11,46 +12,44 @@ function App() {
   const [liftedCard, setLiftedCard] = React.useState(null);
   const [draw, setDraw] = React.useState(false);
   const [eventMsg, setEventMsg] = React.useState(null);
-  const [botLevel, setBotLevel] = React.useState(4000);
+  const [botLevel, setBotLevel] = React.useState(5000);
   const [play, setPlay] = React.useState(false);
   const [paused, setPaused] = React.useState(false);
-  const [score, setScore] = React.useState({my: 0, your: 0});
 
-  let cancelled = false;
+  // let cancelled = false;
 
   React.useEffect(() => {
     refresh();
     return () => {
-      cancelled = true;
+      // cancelled = true;
     }
   }, []);
 
   React.useEffect(() => {
-    console.log("cancel:", cancelled, "stress:", stress, "play:", play)
-    if (cancelled) return;
+    console.log("useffect efter dispatch")
+    // if (cancelled) return;
+    console.log(stress);
+    console.log(play);
     if (stress) {
       setStress(false);
     }
-    if (play) {
+    // if (play) {
       checkCards(deck.cards);
-    }
+    // }
   }, [deck]);
 
   const refresh = () => {
     shuffle().then((result) => {
-      if (cancelled) return;
-      dispatch({type: 'deck/shuffle', payload: { myDeck: result[0], yourDeck: result[1], cards: result[2], sloppy: [], } });
+      // if (cancelled) return;
+      dispatch({ type: 'deck/shuffle', payload: { myDeck: result[0], yourDeck: result[1], cards: result[2], sloppy: [], } });
     });
   }
-  
+
   const handlePause = () => {
-    setPlay(!play); 
+    setPlay(!play);
     setPaused(!paused);
   }
   const handleLevel = (level) => (e) => {
-    setBotLevel(level);
-  }
-  const handleLevelManual = (level) => {
     setBotLevel(level);
   }
 
@@ -75,7 +74,7 @@ function App() {
   }
 
   useInterval(() => {
-    if (!play || cancelled || (!deck.cards[3] && !deck.cards[4])) return;
+    if (!play || (!deck.cards[3] && !deck.cards[4])) return;
     var target1 = Number(deck.cards[3].card);
     var target2 = Number(deck.cards[4].card);
     if (target1 === target2) {
@@ -87,9 +86,11 @@ function App() {
       let temp = Number(deck.cards[i].card);
       if (temp + 1 === target1 || temp - 1 === target1 || (temp === 1 && target1 === 13) || (temp === 13 && target1 === 1)) {
         dispatch({ type: 'deck/putYourCard', lifted: i, target: 3 });
+        // checkCards(deck.cards);
         break;
       } else if (temp + 1 === target2 || temp - 1 === target2 || (temp === 1 && target2 === 13) || (temp === 13 && target2 === 1)) {
         dispatch({ type: 'deck/putYourCard', lifted: i, target: 4 });
+        // checkCards(deck.cards);
         break;
       }
     };
@@ -108,17 +109,16 @@ function App() {
   }
 
   const drop = (e) => {
-    console.log(liftedCard);
     e.preventDefault();
     if (!liftedCard) return;
     var lifted = deck.cards[liftedCard.substr(5, 1)];
     var target = deck.cards[e.target.id.substr(5, 1)];
-    console.log(target);
     if (!target) return;
     var card1 = Number(lifted.card);
     var card2 = Number(target.card);
     if (card1 + 1 === card2 || card1 - 1 === card2 || (card1 === 1 && card2 === 13) || (card1 === 13 && card2 === 1)) {
       dispatch({ type: 'deck/putMyCard', lifted: Number(liftedCard.substr(5, 1)), target: Number(e.target.id.substr(5, 1)) });
+      // checkCards(deck.cards);
     }
   }
   const handleStart = e => {
@@ -126,9 +126,9 @@ function App() {
   }
 
   const checkCards = (list) => {
-    console.log(list);
+    console.log("checkCards börjar")
     //Checks if cards are valid for play or a draw needs to be set up.
-    if (!list[3] || !list[4] || cancelled) return;
+    if (!list[3] || !list[4]) return;
     var valid = false;
     var target1 = Number(list[3].card);
     var target2 = Number(list[4].card);
@@ -148,6 +148,7 @@ function App() {
         valid = true;
       }
     };
+    console.log(list);
     if (!valid && target1 !== target2) {
       if (!list[0] && !list[1] && !list[2]) {
         //Win
@@ -155,7 +156,7 @@ function App() {
       } else if (!list[5] && !list[6] && !list[7]) {
         //Loose
         gameOver("EPIC FAIL", { myScore: 0, yourScore: 1 });
-      } else if (deck.myDeck.length < 1 && deck.yourDeck.length < 1) {
+      } else if (deck.myDeck.length < 1 || deck.yourDeck.length < 1) {
         //No valid cards in play and no more cards to draw: undecided victory
         gameOver("Draw", { myScore: 0, yourScore: 0 });
       } else {
@@ -165,10 +166,10 @@ function App() {
     }
   }
   const gameOver = (msg, points) => {
-    console.log(points);
+    console.log(points); //uyndefined
     setPlay(false);
     setEventMsg(msg);
-    dispatch({type: 'deck/setScore', score: points });
+    dispatch({ type: 'deck/setScore', score: points });
     refresh();
     setTimeout(() => {
       setEventMsg(null);
@@ -176,7 +177,7 @@ function App() {
   }
 
   const handleStress = (me) => {
-    if (!stress || cancelled || !play) return;
+    if (!stress || !play) return;
     if (me) {
       dispatch({ type: 'deck/myStress' });
       newDraw("Success");
@@ -187,15 +188,16 @@ function App() {
   }
 
   const newDraw = (msg) => {
-    if (draw || eventMsg || cancelled) return;
+    if (draw || eventMsg) return;
     setEventMsg(msg);
     setTimeout(() => {
+      setPlay(false);
       setEventMsg(null);
       setDraw(true);
-      setPlay(false); 
       setTimeout(() => {
-        dispatch({type: 'deck/newDeal'});
+        dispatch({ type: 'deck/newDeal' });
         setTimeout(() => {
+          // checkCards(deck.cards);
           setPlay(true);
           setDraw(null);
         }, 300);
@@ -203,25 +205,54 @@ function App() {
     }, 2000);
   }
 
-  // const showReport = () => {
-  //   console.log(deck);
-  // }
+  const test = (cardNumber, x, y) => {
+    // console.log(deck.cards);
+    var elem = document.elementFromPoint(x, y);
+    var lifted = deck.cards[cardNumber];
+    if (elem.id === "card-3-1" || elem.id === "card-3-2") {
+      // console.log(deck.cards)
+      var target = deck.cards[3];
+      var card1 = Number(lifted.card);
+      var card2 = Number(target.card);
+      if (card1 + 1 === card2 || card1 - 1 === card2 || (card1 === 1 && card2 === 13) || (card1 === 13 && card2 === 1)) {
+        dispatch({ type: 'deck/putMyCard', lifted: cardNumber, target: 3 });
+        // checkCards(deck.cards);
+      }
+    } else if (elem.id === "card-4-1" || elem.id === "card-4-2") {
+      // console.log(deck.cards)
+      var targetx = deck.cards[4];
+      var card1x = Number(lifted.card);
+      var card2x = Number(targetx.card);
+      // console.log(card1x);
+      // console.log(card2x);
+      if (card1x + 1 === card2x || card1x - 1 === card2 || (card1x === 1 && card2x === 13) || (card1x === 13 && card2x === 1)) {
+        dispatch({ type: 'deck/putMyCard', lifted: cardNumber, target: 4 });
+        // checkCards(deck.cards);
+      }
+    }
+  }
 
+  const handleMovableCard = (cardNumber, x, y) => {
+    test(cardNumber, x, y);
+  }
+  const showReport = () => {
+    console.log(deck);
+  }
   return (
     <div className="container">
       {paused ? <div className="paused" onClick={handlePause}>
-        <span className="pausedtext"><h3>Game round</h3>
+        <span className="pausedtext"><h1>Information</h1><h3>Game round</h3>
           Stress is quite special unlike other games. In Stress, both players play at the same time and as fast as they want. Color does not matter in this games.
-          <br/><h3>General rules</h3>
+          <br /><br /><h3>General rules</h3>
           Once the cards in the middle (1 from each deck) are dealt both players can deal their own cards on top of them. But this can only be done if the player's card is a denomination higher or lower than the game stack. So if there is a 4 in one pile and one player has a 5, 6 and a 9 then the player can first put a 5, then a 6. But the player may not add his 9 to the game pile becouse the 9 is not a denomination higher or lower of a 7. Ace counts as 14 and 1 so you can only add it on a king or a 2.
-          <br/><h3>Refilling of cards</h3>
+          <br /><br /><h3>Refilling of cards</h3>
           When you lay cards, new cards from the player's deck of cards will move to your action cards.
-          <br/><h3>Stress</h3>
+          <br /><br /><h3>Stress</h3>
           If both cards in the middle have equal numbers a "HIT" button will be displayed. Hit the button and your enemy will gets both piles added to their deck.
-          <br/><h3>Goal</h3>
+          <br /><br /><h3>Goal</h3>
           To get rid of all your cards.
-          <br/><br/><h2>Click anywhere to unpause.</h2></span>
-      </div> : "" }
+          <br /><h2>Click anywhere to unpause.</h2></span>
+      </div> : ""}
       {stress ? <>
         <div className="stressBtn" onClick={handleMyStress}>HIT</div>
         <img src={unknownCard.src} className="spinners top-left" alt="logo" />
@@ -230,20 +261,20 @@ function App() {
         <img src={unknownCard.src} className="spinners bottom-right" alt="logo" />
       </> : ""}
       <div className="cardmenu">
-        {/* <button onClick={showReport}>{"s: " + deck.sloppy.length + " my: " + deck.myDeck.length + " y: " + deck.yourDeck.length + 
+        {/* <button onClick={showReport}>{"s: " + deck.sloppy.length + " my: " + deck.myDeck.length + " y: " + deck.yourDeck.length +
           " c: " + deck.cards.length + " total: " + (deck.sloppy.length + deck.myDeck.length + deck.yourDeck.length + deck.cards.length)}</button> */}
         <button className={paused ? "btnpressed btnpaused" : ""} onClick={handlePause}>Information</button>
-        <button className={botLevel === 4000 ? "btnpressed" : ""} onClick={handleLevel(4000)}>Easy</button>
-        <button className={botLevel === 3000 ? "btnpressed" : ""} onClick={handleLevel(3000)}>Medium</button>
-        <button className={botLevel === 2000 ? "btnpressed" : ""} onClick={handleLevel(2000)}>Hard</button>
-        <button className={botLevel === 1000 ? "btnpressed" : ""} onClick={handleLevel(1000)}>Extreme</button>
+        <button className={botLevel === 5000 ? "btnpressed" : ""} onClick={handleLevel(5000)}>Easy</button>
+        <button className={botLevel === 3700 ? "btnpressed" : ""} onClick={handleLevel(3700)}>Medium</button>
+        <button className={botLevel === 2400 ? "btnpressed" : ""} onClick={handleLevel(2400)}>Hard</button>
+        <button className={botLevel === 1100 ? "btnpressed" : ""} onClick={handleLevel(1100)}>Extreme</button>
 
         {/* <button onClick={newDraw("new Cards")}>New Cards</button> */}
       </div>
       {!play && !eventMsg && !draw ? <div className="startbtn" onClick={handleStart}><div className="startbtndiv"><a><p>
-        <span className="bg"></span><span className="base"></span><span className="text">Click here to start</span></p></a></div></div> : "" }
-    {eventMsg ? <div className="eventmsg">{eventMsg}</div> : ""}
-    {draw ? <div className="countdown"></div> : ""}
+        <span className="bg"></span><span className="base"></span><span className="text">Click here to start</span></p></a></div></div> : ""}
+      {eventMsg ? <div className="eventmsg">{eventMsg}</div> : ""}
+      {draw ? <div className="countdown"></div> : ""}
       <div className="row">
         <div className="card-element yours">
           {deck.cards[5] ?
@@ -262,7 +293,7 @@ function App() {
         </div>
       </div>
       <div className="row">
-        <div className="deck card-element target sidedecks">
+        <div className="deck card-element sidedecks">
           <div className="deck-amount">{deck.yourDeck.length}</div>
           {deck.yourDeck.length > 0 ?
             <img src={unknownCard.src} className="deckcard" alt="card" draggable="false" />
@@ -273,12 +304,12 @@ function App() {
             <img id="card-3-2" src={deck.cards[3].src} className="deckcard" alt="card" draggable="false" />
             : ""}
         </div>
-        <div id="card-4-1" className="card-element target" id={"target-2"} onDrop={drop} onDragOver={allowDrop}>
+        <div id="card-4-1" className="card-element target" onDrop={drop} onDragOver={allowDrop}>
           {deck.cards[4] && play ?
             <img id="card-4-2" src={deck.cards[4].src} className="deckcard" alt="card" draggable="false" />
             : ""}
         </div>
-        <div className="deck card-element target sidedecks">
+        <div className="deck card-element sidedecks">
           <div className="deck-amount">{deck.myDeck.length}</div>
           {deck.myDeck.length > 0 ?
             <img src={unknownCard.src} className="deckcard" alt="card" draggable="false" />
@@ -288,17 +319,20 @@ function App() {
       <div className="row">
         <div className="card-element my">
           {deck.cards[0] ?
-            <img id="card-0" src={deck.cards[0].src} className="deckcard" alt="card" draggable="true" onDragStart={drag} />
+            <img id={"card-0"} src={deck.cards[0].src} className="deckcard movable" alt="card" draggable="true" onDragStart={drag} />
+            // <MovableCard key="0" startx={340} starty={487} card={deck.cards[0]} cardNumber={"0"} drag={drag} handleMovableCard={handleMovableCard}/>
             : ""}
         </div>
         <div className="card-element my">
           {deck.cards[1] ?
-            <img id="card-1" src={deck.cards[1].src} className="deckcard" alt="card" draggable="true" onDragStart={drag} />
+            <img id={"card-1"} src={deck.cards[1].src} className="deckcard movable" alt="card" draggable="true" onDragStart={drag} />
+            // <MovableCard key="1" startx={460} starty={487} card={deck.cards[1]} cardNumber={"1"} drag={drag} handleMovableCard={handleMovableCard} />
             : ""}
         </div>
         <div className="card-element my">
           {deck.cards[2] ?
-            <img id="card-2" src={deck.cards[2].src} className="deckcard" alt="card" draggable="true" onDragStart={drag} />
+            <img id={"card-2"} src={deck.cards[2].src} className="deckcard movable" alt="card" draggable="true" onDragStart={drag} />
+            // <MovableCard key="2" startx={580} starty={487} card={deck.cards[2]} cardNumber={"2"} drag={drag} handleMovableCard={handleMovableCard} />
             : ""}
         </div>
       </div>
