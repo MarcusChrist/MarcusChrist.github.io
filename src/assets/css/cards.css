@@ -371,6 +371,9 @@ div .startbtn a {
   .movable {
     margin-left: -35.5px;
   }
+  .startbtn {
+    top: 17.5%;
+  }
 }
 
 @media (max-width: 400px) {
@@ -394,6 +397,9 @@ div .startbtn a {
   }
   .movable {
     margin-left: -27px;
+  }
+  .startbtn {
+    top: 14.5%;
   }
 }
 
