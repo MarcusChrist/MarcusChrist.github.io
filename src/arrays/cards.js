@@ -57,7 +57,7 @@ export const initialState = {
   yourDeck: [],
   sloppy: [],
   cards: [],
-  score: {myScore: 0, yourScore: 0}
+  score: { myScore: 0, yourScore: 0 }
 };
 
 export const initialStateLifted = {

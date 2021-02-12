@@ -25,7 +25,7 @@ function App() {
     }
   }, []);
 
-  React.useEffect(() => {
+  React.useEffect(() => { //Behöver ändras
     console.log("useffect efter dispatch")
     // if (cancelled) return;
     console.log(stress);
@@ -41,7 +41,7 @@ function App() {
   const refresh = () => {
     shuffle().then((result) => {
       // if (cancelled) return;
-      dispatch({ type: 'deck/shuffle', payload: { myDeck: result[0], yourDeck: result[1], cards: result[2], sloppy: [], } });
+      dispatch({ type: 'deck/shuffle', myDeck: result[0], yourDeck: result[1], cards: result[2] });
     });
   }
 
@@ -132,12 +132,12 @@ function App() {
     var valid = false;
     var target1 = Number(list[3].card);
     var target2 = Number(list[4].card);
-    if (target1 === target2 && target1 !== (undefined || null)) {
-      //Stress starts if both targets are the same, BotStress is a timer for when the bot will "press the button"
-      setStress(true);
-    } else if (stress) {
+    if (stress) {
       //Cancel stress if targets are not the same (no stress) and stress still active
       setStress(false);
+    } else if (target1 === target2 && target1 !== (undefined || null)) {
+      //Stress starts if both targets are the same, BotStress is a timer for when the bot will "press the button"
+      setStress(true);
     }
     for (var i = 0; i < 8; i++) {
       if (i === 3 || i === 4 || !list[i]) continue;
@@ -152,24 +152,35 @@ function App() {
     if (!valid && target1 !== target2) {
       if (!list[0] && !list[1] && !list[2]) {
         //Win
-        gameOver("YOU WON", { myScore: 1, yourScore: 0 });
+        gameOver("YOU WON", true);
       } else if (!list[5] && !list[6] && !list[7]) {
         //Loose
-        gameOver("EPIC FAIL", { myScore: 0, yourScore: 1 });
-      } else if (deck.myDeck.length < 1 || deck.yourDeck.length < 1) {
+        gameOver("EPIC FAIL", false);
+      } else if (deck.myDeck.length < 1 && deck.yourDeck.length < 1) {
         //No valid cards in play and no more cards to draw: undecided victory
-        gameOver("Draw", { myScore: 0, yourScore: 0 });
+        gameOver("Draw", "even");
+      } else if (deck.myDeck.length < 1) {
+        //Win
+        gameOver("YOU WON", true);
+      } else if (deck.yourDeck.length < 1) {
+        //Loose
+        gameOver("EPIC FAIL", false);
       } else {
         //if no stress and no valid cards, execute new Draw
         newDraw("No valid cards");
       }
     }
   }
-  const gameOver = (msg, points) => {
-    console.log(points); //uyndefined
+  const gameOver = (msg, win) => {
     setPlay(false);
     setEventMsg(msg);
-    dispatch({ type: 'deck/setScore', score: points });
+    if (win === "even") {
+      //do nothing
+    } else if (win) {
+      dispatch({ type: 'deck/win' });
+    } else {
+      dispatch({ type: 'deck/loose' });
+    }
     refresh();
     setTimeout(() => {
       setEventMsg(null);
@@ -188,7 +199,9 @@ function App() {
   }
 
   const newDraw = (msg) => {
+    console.log("newdraw börjar")
     if (draw || eventMsg) return;
+    // if (stress) setStress(false);
     setEventMsg(msg);
     setTimeout(() => {
       setPlay(false);
@@ -238,6 +251,7 @@ function App() {
   const showReport = () => {
     console.log(deck);
   }
+  console.log(deck);
   return (
     <div className="container">
       {paused ? <div className="paused" onClick={handlePause}>
@@ -263,6 +277,7 @@ function App() {
       <div className="cardmenu">
         {/* <button onClick={showReport}>{"s: " + deck.sloppy.length + " my: " + deck.myDeck.length + " y: " + deck.yourDeck.length +
           " c: " + deck.cards.length + " total: " + (deck.sloppy.length + deck.myDeck.length + deck.yourDeck.length + deck.cards.length)}</button> */}
+        {deck.score ? <button>{"score: " + deck.score.myScore + "-" + deck.score.yourScore} </button> : ""}
         <button className={paused ? "btnpressed btnpaused" : ""} onClick={handlePause}>Information</button>
         <button className={botLevel === 5000 ? "btnpressed" : ""} onClick={handleLevel(5000)}>Easy</button>
         <button className={botLevel === 3700 ? "btnpressed" : ""} onClick={handleLevel(3700)}>Medium</button>
@@ -294,44 +309,44 @@ function App() {
       </div>
       <div className="row">
         <div className="deck card-element sidedecks">
-          <div className="deck-amount">{deck.yourDeck.length}</div>
-          {deck.yourDeck.length > 0 ?
-            <img src={unknownCard.src} className="deckcard" alt="card" draggable="false" />
+          {deck.yourDeck.length > 0 ? deck.yourDeck.map((item, i) => {
+              return <img src={unknownCard.src} key={"yourdeck-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-40px", position: "absolute"}} alt="card" draggable="false" />
+            })
             : ""}
         </div>
-        <div id="card-3-1" className="card-element target" onDrop={drop} onDragOver={allowDrop}>
+        <div id="card-3-1" className="card-element target" onDrop={drop} onDragOver={allowDrop} onClick={drop}>
           {deck.cards[3] && play ?
             <img id="card-3-2" src={deck.cards[3].src} className="deckcard" alt="card" draggable="false" />
             : ""}
         </div>
-        <div id="card-4-1" className="card-element target" onDrop={drop} onDragOver={allowDrop}>
+        <div id="card-4-1" className="card-element target" onDrop={drop} onDragOver={allowDrop} onClick={drop}>
           {deck.cards[4] && play ?
             <img id="card-4-2" src={deck.cards[4].src} className="deckcard" alt="card" draggable="false" />
             : ""}
         </div>
         <div className="deck card-element sidedecks">
-          <div className="deck-amount">{deck.myDeck.length}</div>
-          {deck.myDeck.length > 0 ?
-            <img src={unknownCard.src} className="deckcard" alt="card" draggable="false" />
+          {deck.myDeck.length > 0 ? deck.myDeck.map((item, i) => {
+              return <img src={unknownCard.src} key={"mydeck-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px",  marginLeft: "-40px",position: "absolute"}} alt="card" draggable="false" />
+            })
             : ""}
         </div>
       </div>
       <div className="row">
         <div className="card-element my">
           {deck.cards[0] ?
-            <img id={"card-0"} src={deck.cards[0].src} className="deckcard movable" alt="card" draggable="true" onDragStart={drag} />
+            <img id={"card-0"} src={deck.cards[0].src} className="deckcard movable" alt="card" draggable="true" onDragStart={drag} onClick={drag} />
             // <MovableCard key="0" startx={340} starty={487} card={deck.cards[0]} cardNumber={"0"} drag={drag} handleMovableCard={handleMovableCard}/>
             : ""}
         </div>
         <div className="card-element my">
           {deck.cards[1] ?
-            <img id={"card-1"} src={deck.cards[1].src} className="deckcard movable" alt="card" draggable="true" onDragStart={drag} />
+            <img id={"card-1"} src={deck.cards[1].src} className="deckcard movable" alt="card" draggable="true" onDragStart={drag} onClick={drag}/>
             // <MovableCard key="1" startx={460} starty={487} card={deck.cards[1]} cardNumber={"1"} drag={drag} handleMovableCard={handleMovableCard} />
             : ""}
         </div>
         <div className="card-element my">
           {deck.cards[2] ?
-            <img id={"card-2"} src={deck.cards[2].src} className="deckcard movable" alt="card" draggable="true" onDragStart={drag} />
+            <img id={"card-2"} src={deck.cards[2].src} className="deckcard movable" alt="card" draggable="true" onDragStart={drag} onClick={drag}/>
             // <MovableCard key="2" startx={580} starty={487} card={deck.cards[2]} cardNumber={"2"} drag={drag} handleMovableCard={handleMovableCard} />
             : ""}
         </div>

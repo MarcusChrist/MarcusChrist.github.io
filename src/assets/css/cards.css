@@ -119,6 +119,8 @@ h3 {
 }
 .sidedecks {
   position: relative;
+  padding-top: 50px;
+  /* position: "absolute"; */
 }
 .deck {
   margin: 5vmin 15vmin;

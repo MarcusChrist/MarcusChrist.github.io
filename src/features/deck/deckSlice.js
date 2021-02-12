@@ -4,7 +4,13 @@ import { initialState } from '../../arrays/cards';
 export default function deckReducer(state = initialState, action) {
     switch (action.type) {
         case 'deck/shuffle':
-            return action.payload
+            return {
+                myDeck: action.myDeck,
+                yourDeck: action.yourDeck,
+                sloppy: [],
+                cards: action.cards,
+                score: state.score,
+            }
         case 'deck/putMyCard':
             return {
                 ...state,
@@ -37,6 +43,7 @@ export default function deckReducer(state = initialState, action) {
             }
         case 'deck/newDeal':
             return {
+                ...state,
                 sloppy: state.cards[3] && state.cards[4] ? [...state.sloppy, state.cards[3], state.cards[4]] : [...state.sloppy],
                 cards: state.cards.map((item, x) => {
                     if (x === 3) {
@@ -49,7 +56,6 @@ export default function deckReducer(state = initialState, action) {
                 }),
                 myDeck: state.myDeck.slice(1),
                 yourDeck: state.yourDeck.slice(1),
-                score: state.score
             }
         case 'deck/myStress':
             return {
@@ -63,13 +69,15 @@ export default function deckReducer(state = initialState, action) {
                 myDeck: [...state.myDeck, ...state.sloppy],
                 sloppy: [],
             }
-        case 'deck/setScore':
+        case 'deck/win':
             return {
                 ...state,
-                score: {
-                    myScore: state.score.myScore += action.score.myScore,
-                    yourScore: state.score.yourScore += action.score.yourScore,
-                }
+                score: {...state.score, myScore: state.score.myScore + 1 }
+            }
+        case 'deck/loose':
+            return {
+                ...state,
+                score: {...state.score, yourScore: state.score.yourScore + 1 }
             }
         default:
             return state
