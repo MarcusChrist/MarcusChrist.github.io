@@ -55,9 +55,15 @@ import Unknown from '../assets/images/cards/purple_back.png';
 export const initialState = {
   myDeck: [],
   yourDeck: [],
-  sloppy: [],
+  mySlop: [],
+  yourSlop: [],
   cards: [],
-  score: { myScore: 0, yourScore: 0 }
+  score: { player: 0, enemy: 0 },
+  play: false,
+  paused: false,
+  stress: false,
+  draw: false,
+  eventMsg: null,
 };
 
 export const initialStateLifted = {

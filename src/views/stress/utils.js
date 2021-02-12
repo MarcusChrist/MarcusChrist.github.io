@@ -11,8 +11,9 @@ export const shuffle = async () => {
       tempDeck[i] = tempDeck[randomCard];
       tempDeck[randomCard] = tempX;
     }
-    var cards = tempDeck.slice(0, 8);
-    var deck1 = tempDeck.slice(8, 30);
-    var deck2 = tempDeck.slice(30,52);
+    var cards = tempDeck.slice(0, 6);
+    var deck1 = tempDeck.slice(6, 29);
+    var deck2 = tempDeck.slice(29,52);
+    cards.splice(3, 0, null, null);
     return ([deck1, deck2, cards]);
   }

@@ -5,16 +5,22 @@ export default function deckReducer(state = initialState, action) {
     switch (action.type) {
         case 'deck/shuffle':
             return {
+                ...state,
                 myDeck: action.myDeck,
                 yourDeck: action.yourDeck,
-                sloppy: [],
+                mySlop: [],
+                yourSlop: [],
                 cards: action.cards,
-                score: state.score,
+                play: false,
+                eventMsg: null,
+                score: {player: state.score.player + action.player, enemy: state.score.enemy + action.enemy}
             }
         case 'deck/putMyCard':
             return {
                 ...state,
-                sloppy: [...state.sloppy, state.cards[action.target]],
+                mySlop: action.target === 4 ? [...state.mySlop, state.cards[action.target]] : [...state.mySlop],
+                yourSlop: action.target === 3 ? [...state.yourSlop, state.cards[action.target]] : [...state.yourSlop],
+                // sloppy: [...state.sloppy, state.cards[action.target]],
                 cards: state.cards.map((item, x) => {
                     if (x === action.lifted) {
                         return state.myDeck[0];
@@ -24,12 +30,14 @@ export default function deckReducer(state = initialState, action) {
                         return item;
                     }
                 }),
-                myDeck: state.myDeck.slice(1)
+                myDeck: state.myDeck.slice(1),
             }
         case 'deck/putYourCard':
             return {
                 ...state,
-                sloppy: [...state.sloppy, state.cards[action.target]],
+                mySlop: action.target === 4 ? [...state.mySlop, state.cards[action.target]] : [...state.mySlop],
+                yourSlop: action.target === 3 ? [...state.yourSlop, state.cards[action.target]] : [...state.yourSlop],
+                // sloppy: [...state.sloppy, state.cards[action.target]],
                 cards: state.cards.map((item, x) => {
                     if (x === action.lifted) {
                         return state.yourDeck[0];
@@ -44,7 +52,9 @@ export default function deckReducer(state = initialState, action) {
         case 'deck/newDeal':
             return {
                 ...state,
-                sloppy: state.cards[3] && state.cards[4] ? [...state.sloppy, state.cards[3], state.cards[4]] : [...state.sloppy],
+                mySlop: state.cards[4] ? [...state.mySlop, state.cards[4]] : [...state.mySlop],
+                yourSlop: state.cards[3] ? [...state.yourSlop, state.cards[3]] : [...state.yourSlop],
+                // sloppy: state.cards[3] && state.cards[4] ? [...state.sloppy, state.cards[3], state.cards[4]] : [...state.sloppy],
                 cards: state.cards.map((item, x) => {
                     if (x === 3) {
                       return state.yourDeck[0];
@@ -56,28 +66,64 @@ export default function deckReducer(state = initialState, action) {
                 }),
                 myDeck: state.myDeck.slice(1),
                 yourDeck: state.yourDeck.slice(1),
+                draw: true,
+                eventMsg: null,
             }
         case 'deck/myStress':
             return {
                 ...state,
-                yourDeck: [...state.yourDeck, ...state.sloppy],
-                sloppy: [],
+                yourDeck: [...state.yourDeck, ...state.mySlop, ...state.yourSlop],
+                mySlop: [],
+                yourSlop: [],
+                stress: false,
+                play: false,
+                // cards: state.cards.map((item, x) => {
+                //     if (x === 3 || x === 4) {
+                //       return null;
+                //     } else {
+                //       return item;
+                //     }
+                // })
             }
         case 'deck/yourStress':
             return {
                 ...state,
-                myDeck: [...state.myDeck, ...state.sloppy],
-                sloppy: [],
+                myDeck: [...state.myDeck, ...state.mySlop, ...state.yourSlop],
+                mySlop: [],
+                yourSlop: [],
+                stress: false,
+                play: false,
+                // , ...state.cards[3], ...state.cards[4]
+                // cards: state.cards.map((item, x) => {
+                //     if (x === 3 || x === 4) {
+                //       return null;
+                //     } else {
+                //       return item;
+                //     }
+                // })
             }
-        case 'deck/win':
+        case 'deck/handlePause':
             return {
                 ...state,
-                score: {...state.score, myScore: state.score.myScore + 1 }
+                play: !state.play,
+                paused: !state.paused
             }
-        case 'deck/loose':
+        case 'deck/setStress':
             return {
                 ...state,
-                score: {...state.score, yourScore: state.score.yourScore + 1 }
+                stress: action.stress
+            }
+        case 'deck/setEventMsg':
+            return {
+                ...state,
+                play: false,
+                eventMsg: action.eventMsg,
+            }
+        case 'deck/play':
+            return {
+                ...state,
+                play: true,
+                draw: false,
             }
         default:
             return state
