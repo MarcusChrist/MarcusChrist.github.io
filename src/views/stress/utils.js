@@ -3,6 +3,19 @@ import React from 'react';
 import { deckArray, unknownCard } from '../../arrays/cards';
 import '../../assets/css/cards.css';
 
+const cacheImages = async (srcArray) => {
+    
+  const promises = await srcArray.map((card) => {
+    return new Promise(function (resolve, reject) {
+      const img = new Image();
+      img.src = card.src;
+      img.onload = resolve();
+      img.onerror = reject();
+    });
+  });
+
+  await Promise.all(promises);
+};
 export const shuffle = async () => {
     let tempDeck = [...deckArray];
     let randomCard;
@@ -13,10 +26,12 @@ export const shuffle = async () => {
       tempDeck[i] = tempDeck[randomCard];
       tempDeck[randomCard] = tempX;
     }
-    var cards = tempDeck.slice(0, 6);
-    var deck1 = tempDeck.slice(6, 29);
-    var deck2 = tempDeck.slice(29,52);
-    cards.splice(3, 0, null, null);
+    cacheImages(tempDeck);
+    var cards = [unknownCard, unknownCard, unknownCard, null, null, unknownCard, unknownCard, unknownCard];
+    var deck1 = tempDeck.slice(0, 26);
+    var deck2 = tempDeck.slice(26,52);
+
+    // cards.splice(3, 0, null, null);
     return ([deck1, deck2, cards]);
   }
 

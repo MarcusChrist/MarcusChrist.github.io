@@ -72,35 +72,34 @@ export default function deckReducer(state = initialState, action) {
         case 'deck/myStress':
             return {
                 ...state,
-                yourDeck: [...state.yourDeck, ...state.mySlop, ...state.yourSlop],
+                yourDeck: [...state.yourDeck, ...state.mySlop, ...state.yourSlop, state.cards[3], state.cards[4]],
                 mySlop: [],
                 yourSlop: [],
                 stress: false,
                 play: false,
-                // cards: state.cards.map((item, x) => {
-                //     if (x === 3 || x === 4) {
-                //       return null;
-                //     } else {
-                //       return item;
-                //     }
-                // })
+                cards: state.cards.map((item, x) => {
+                    if (x === 3 || x === 4) {
+                      return null;
+                    } else {
+                      return item;
+                    }
+                })
             }
         case 'deck/yourStress':
             return {
                 ...state,
-                myDeck: [...state.myDeck, ...state.mySlop, ...state.yourSlop],
+                myDeck: [...state.myDeck, ...state.mySlop, ...state.yourSlop, state.cards[3], state.cards[4]],
                 mySlop: [],
                 yourSlop: [],
                 stress: false,
                 play: false,
-                // , ...state.cards[3], ...state.cards[4]
-                // cards: state.cards.map((item, x) => {
-                //     if (x === 3 || x === 4) {
-                //       return null;
-                //     } else {
-                //       return item;
-                //     }
-                // })
+                cards: state.cards.map((item, x) => {
+                    if (x === 3 || x === 4) {
+                      return null;
+                    } else {
+                      return item;
+                    }
+                })
             }
         case 'deck/handlePause':
             return {
@@ -124,6 +123,30 @@ export default function deckReducer(state = initialState, action) {
                 ...state,
                 play: true,
                 draw: false,
+            }
+        case 'deck/dealMyCard':
+            return {
+                ...state,
+                cards: state.cards.map((item, x) => {
+                    if (x === action.card) {
+                        return state.myDeck[0];
+                    } else {
+                      return item;
+                    }
+                }),
+                myDeck: state.myDeck.slice(1),
+            }
+        case 'deck/dealYourCard':
+            return {
+                ...state,
+                cards: state.cards.map((item, x) => {
+                    if (x === action.card) {
+                        return state.yourDeck[0];
+                    } else {
+                        return item;
+                    }
+                }),
+                yourDeck: state.yourDeck.slice(1),
             }
         default:
             return state

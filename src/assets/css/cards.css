@@ -83,7 +83,7 @@ h3 {
     background: transparent; /* make scrollbar transparent */
 }
 .row {
-  height: 28%;
+  height: 33%;
   margin-left:auto;
   margin-right:auto;
   display: table;
@@ -125,7 +125,8 @@ h3 {
 }
 .sidedecks {
   position: relative;
-  padding-top: 50px;
+  margin-bottom: 0px!important;
+  padding-bottom: 0px!important;
   /* position: "absolute"; */
 }
 .deck {
@@ -343,15 +344,36 @@ div .startbtn button {
 .startbtn button p:hover span.text:after {
   background: #ece8e1;
 }
-.move {
-  transition: transform 0.429s;
-}
 
+.move {
+  transition: transform 0.056s;
+}
+.invisible {
+  display: none;
+}
 .moveright {
   transform: translateX(-186px);
 }
 .moveleft {
   transform: translateX(+186px);
+}
+.move-0 {
+  transform: translateY(-180px) translateX(+336px);
+}
+.move-1 {
+  transform: translateY(-180px) translateX(+216px);
+}
+.move-2 {
+  transform: translateY(-180px) translateX(+106px);
+}
+.move-5 {
+  transform: translateY(+230px) translateX(-106px);
+}
+.move-6 {
+  transform: translateY(+230px) translateX(-216px);
+}
+.move-7 {
+  transform: translateY(+230px) translateX(-336px);
 }
 
 
@@ -372,6 +394,12 @@ div .startbtn button {
   }
   .eventmsg {
     font-size: 8vh;
+  }
+  .moveright {
+    transform: translateX(-156px);
+  }
+  .moveleft {
+    transform: translateX(+156px);
   }
 }
 
@@ -397,6 +425,12 @@ div .startbtn button {
   .startbtn {
     top: 17.5%;
   }
+  .moveright {
+    transform: translateX(-116px);
+  }
+  .moveleft {
+    transform: translateX(+116px);
+  }
 }
 
 @media (max-width: 400px) {
@@ -420,6 +454,12 @@ div .startbtn button {
   }
   .startbtn {
     top: 14.5%;
+  }
+  .moveright {
+    transform: translateX(-56px);
+  }
+  .moveleft {
+    transform: translateX(+56px);
   }
 }
 

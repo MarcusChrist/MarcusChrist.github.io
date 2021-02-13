@@ -1,8 +1,8 @@
 import React from 'react';
 
 import './assets/css/cards.css';
-import { unknownCard, initialState } from './arrays/cards';
-import { CardMenu, shuffle, Information, Stress, DeckCard } from './views/stress/utils';
+import { unknownCard, initialState, deckArray } from './arrays/cards';
+import { CardMenu, shuffle, Information, Stress } from './views/stress/utils';
 import deckReducer from './features/deck/deckSlice';
 // import { MovableCard } from './views/stress/movableCard';
 
@@ -10,14 +10,47 @@ function App() {
   const [deck, dispatch] = React.useReducer(deckReducer, initialState) 
   const [liftedCard, setLiftedCard] = React.useState(null);
   const [botLevel, setBotLevel] = React.useState(5000);
-
+  const [loading, setLoading] = React.useState(true);
 
   //setup the game on component did mount
   React.useEffect(() => {
+    cacheImages(deckArray);
+    
+    // const promises = deckArray.map((card) => {
+    //   return new Promise(function (resolve, reject) {
+    //     const img = new Image();
+    //     img.src = card.src;
+    //     img.onload = resolve();
+    //     img.onerror = reject();
+    //   });
+    // });
+  
+    // Promise.all(promises);
     refresh(0,0);
-    return () => {
-    }
   }, []);
+  
+  const cacheImages = async (srcArray) => {
+    
+    const promises = await srcArray.map((card) => {
+      return new Promise(function (resolve, reject) {
+        const img = new Image();
+        img.src = card.src;
+        img.onload = resolve();
+        img.onerror = reject();
+      });
+    });
+  
+    const unknown = new Promise(function (resolve, reject) {
+      const img = new Image();
+      img.src = unknownCard.src;
+      img.onload = resolve();
+      img.onerror = reject();
+    });
+  
+    await Promise.all(promises);
+    setLoading(false);
+    console.log("nu")
+  };
 
   //validade cards in play for stress, new draw or gameover.
   React.useEffect(() => { 
@@ -29,7 +62,18 @@ function App() {
   const refresh = (player, enemy) => {
     shuffle().then((result) => {
       dispatch({ type: 'deck/shuffle', myDeck: result[0], yourDeck: result[1], cards: result[2], player: player, enemy: enemy });
-    });
+    }).then(() => {
+      setTimeout(() => {
+        for (let i = 0; i < 8; i++) {
+          if (i === 3) {
+            i = 5;
+          }
+          setTimeout(function() {
+            moveCard(i, i < 4 ? "dealMyCard" : "dealYourCard", "");
+          }, i * 300);
+        }
+      }, 2000);
+    })
   }
 
   const useInterval = (callback, delay) => {
@@ -59,19 +103,40 @@ function App() {
     if (target1 === target2) {
       handleStress(false);
     } else {
+      let found;
       for (var i = 5; i < 8; i++) {
         if (!deck.cards[i]) continue;
         let temp = Number(deck.cards[i].card);
         if (temp + 1 === target1 || temp - 1 === target1 || (temp === 1 && target1 === 13) || (temp === 13 && target1 === 1)) {
-          dispatch({ type: 'deck/putYourCard', lifted: i, target: 3 })
+          found = 3;
           break;
         } else if (temp + 1 === target2 || temp - 1 === target2 || (temp === 1 && target2 === 13) || (temp === 13 && target2 === 1)) {
-          dispatch({ type: 'deck/putYourCard', lifted: i, target: 4 });
+          found = 4;
           break;
         }
       };
+      if (found) {
+        moveCard(i, "putYourCard", found);
+      }
     }
   }, botLevel);
+
+  const moveCard = (cardNr, type, target) => {
+    console.log(type);
+    const temp = document.getElementById("card-" + cardNr.toString());
+    if (temp) {
+      temp.className = temp.className.concat('move-' + cardNr.toString()).replace("invisible","");
+    }
+    dispatch({ type: 'deck/' + type, lifted: cardNr, target: target, card: cardNr});
+    setTimeout(() => {
+      const faked = document.getElementsByClassName("move-" + cardNr.toString());
+      if (faked && faked[0]) {
+        while(faked.length > 0){
+          faked[0].classList.remove('move-' + cardNr.toString());
+        }
+      }
+    }, 100);
+  }
 
   const drop = (e) => {
     e.preventDefault();
@@ -83,7 +148,7 @@ function App() {
     var card1 = Number(lifted.card);
     var card2 = Number(target.card);
     if (card1 + 1 === card2 || card1 - 1 === card2 || (card1 === 1 && card2 === 13) || (card1 === 13 && card2 === 1)) {
-      dispatch({ type: 'deck/putMyCard', lifted: Number(liftedCard.substr(5, 1)), target: Number(e.target.id.substr(5, 1)) });
+      moveCard(Number(liftedCard.substr(5, 1)), "putMyCard", Number(e.target.id.substr(5, 1)));
     }
   }
 
@@ -96,6 +161,8 @@ function App() {
       //Stress starts if both targets are the same
       dispatch({ type: 'deck/setStress', stress: true });
       return;
+    } else if (deck.stress) {
+      dispatch({ type: 'deck/setStress', stress: false });
     }
     let valid = false;  
     for (var i = 0; i < 8; i++) {
@@ -140,6 +207,13 @@ function App() {
   const gameOver = (msg, score) => {
     dispatch({ type: 'deck/setEventMsg', eventMsg: msg });
     setTimeout(() => {
+      for (var i = 0; i < 8; i++) {
+        if (i === 3) i = 5;
+        const temp = document.getElementById("card-" + i);
+        if (temp) {
+          temp.className = temp.className.concat("invisible");
+        }
+      }
       refresh(score.player, score.enemy);
     }, 3000);
   }
@@ -154,20 +228,21 @@ function App() {
       newDraw("Fail");
     }
   }
+
   const newDraw = (msg) => {
     dispatch({ type: 'deck/setEventMsg', eventMsg: msg });
     setTimeout(() => {
       dispatch({ type: 'deck/newDeal' });
       setTimeout(() => {
-        dispatch({ type: 'deck/play' });
         const temp = document.getElementById("card-3-2")
         if (temp) {
-          temp.className = temp.className.concat(' moveright');
+          temp.className = temp.className.concat('moveright');
         }
         const temp2 = document.getElementById("card-4-2")
         if (temp2) {
-          temp2.className = temp2.className.concat(' moveleft');
+          temp2.className = temp2.className.concat('moveleft');
         }
+        dispatch({ type: 'deck/play' });
         setTimeout(() => {
           const faked = document.getElementsByClassName("moveright");
           if (faked && faked[0]) {
@@ -181,9 +256,9 @@ function App() {
               faked2[0].classList.remove('moveleft');
             }
           }
-        }, 300);
+        }, 100);
       }, 2600);
-    }, 3000);
+    }, 2000);
   }
   
   const handlePause = () => {
@@ -215,6 +290,7 @@ function App() {
     console.log(deck);
   }
   const handleStart = e => {
+    // refresh(0,0)
     newDraw("Starting...");
   }
   
@@ -245,11 +321,12 @@ function App() {
       </>
     )
   }
-  console.log(deck);
+  // console.log(deck.cards.length + deck.mySlop.length + deck.yourSlop.length + deck.myDeck.length + deck.yourDeck.length);
   return (
     <div className="container">
-      {deck.paused ? <Information handlePause={handlePause} /> : "" }
-      {deck.stress ? <Stress handleMyStress={handleMyStress} /> : "" }
+      {loading ? "" : <>
+      { deck.stress ? <Stress handleMyStress={handleMyStress} /> : "" }
+      { deck.paused ? <Information handlePause={handlePause} /> : "" }
       <CardMenu botLevel={botLevel} paused={deck.paused} handleLevel={handleLevel} handlePause={handlePause} />
       <div className="scoreboard">{deck.score.player + " - " + deck.score.enemy}</div>
       {!deck.play && !deck.eventMsg && !deck.draw ? <div className="startbtn" onClick={handleStart}><div className="startbtndiv"><button><p>
@@ -259,17 +336,17 @@ function App() {
       <div className="row">
         <div className="card-element yours">
           {deck.cards[5] ?
-            <img id="card-5" src={deck.cards[5].src} className="deckcard" alt="card" draggable="false" />
+            <img id="card-5" src={deck.cards[5].src} className="deckcard move invisible" alt="card" draggable="false" />
             : ""}
         </div>
         <div className="card-element yours">
           {deck.cards[6] ?
-            <img id="card-6" src={deck.cards[6].src} className="deckcard" alt="card" draggable="false" />
+            <img id="card-6" src={deck.cards[6].src} className="deckcard move invisible" alt="card" draggable="false" />
             : ""}
         </div>
         <div className="card-element yours">
           {deck.cards[7] ?
-            <img id="card-7" src={deck.cards[7].src} className="deckcard" alt="card" draggable="false" />
+            <img id="card-7" src={deck.cards[7].src} className="deckcard move invisible" alt="card" draggable="false" />
             : ""}
         </div>
       </div>
@@ -291,23 +368,24 @@ function App() {
       <div className="row">
         <div className="card-element my">
           {deck.cards[0] ?
-            <img id={"card-0"} src={deck.cards[0].src} className="deckcard movable" alt="card" draggable="true" onDragStart={drag} onClick={drag} />
+            <img id={"card-0"} src={deck.cards[0].src} className="deckcard movable move invisible" alt="card" draggable="true" onDragStart={drag} onClick={drag} />
             // <MovableCard key="0" startx={340} starty={487} card={deck.cards[0]} cardNumber={"0"} drag={drag} handleMovableCard={handleMovableCard}/>
             : ""}
         </div>
         <div className="card-element my">
           {deck.cards[1] ?
-            <img id={"card-1"} src={deck.cards[1].src} className="deckcard movable" alt="card" draggable="true" onDragStart={drag} onClick={drag}/>
-            // <MovableCard key="1" startx={460} starty={487} card={deck.cards[1]} cardNumber={"1"} drag={drag} handleMovableCard={handleMovableCard} />
-            : ""}
+            <img id={"card-1"} src={deck.cards[1].src} className="deckcard movable move invisible" alt="card" draggable="true" onDragStart={drag} onClick={drag}/>
+            // <MovableCard key="1" startx={460} starty={487} card={deck.cards[1]} cardNumber={"1"} drag={drag} handleMovableCard={handleMovableCard} /> */}
+             : ""} 
         </div>
         <div className="card-element my">
           {deck.cards[2] ?
-            <img id={"card-2"} src={deck.cards[2].src} className="deckcard movable" alt="card" draggable="true" onDragStart={drag} onClick={drag}/>
+            <img id={"card-2"} src={deck.cards[2].src} className="deckcard movable move invisible" alt="card" draggable="true" onDragStart={drag} onClick={drag}/>
             // <MovableCard key="2" startx={580} starty={487} card={deck.cards[2]} cardNumber={"2"} drag={drag} handleMovableCard={handleMovableCard} />
             : ""}
         </div>
       </div>
+      </> } 
     </div>
   );
 }
