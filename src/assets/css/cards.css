@@ -110,6 +110,12 @@ h3 {
   cursor: pointer;
   opacity: .6;
 }
+.fakedhover {
+  -webkit-animation: wiggle 0.3s 0s infinite ease-in;
+  animation: wiggle 0.3s 0s infinite ease-in;
+  cursor: pointer;
+  opacity: .6;
+}
 .target {
   border: 2px dashed #D9D9D9;
   border-radius: 5px;
@@ -144,7 +150,7 @@ button:hover {
   content: "READY";
   -webkit-animation: pulsate 3s ease-out;
   animation: pulsate 3s ease-out;
-  z-index: 12;
+  z-index: 9;
 }
 .btnpressed {
   background: #e5e5e5;
@@ -166,7 +172,7 @@ button:hover {
   -moz-animation: fadeIn ease 2.5s;
   -o-animation: fadeIn ease 2.5s;
   -ms-animation: fadeIn ease 2.5s;
-  z-index: 11;
+  z-index: 9;
 }
 
 .stressBtn {
@@ -187,7 +193,7 @@ button:hover {
   -moz-animation: fadeIn ease 0.3s;
   -o-animation: fadeIn ease 0.3s;
   -ms-animation: fadeIn ease 0.3s;
-  z-index: 13;
+  z-index: 10;
 }
 
 .stressBtn:hover {
@@ -337,6 +343,17 @@ div .startbtn button {
 .startbtn button p:hover span.text:after {
   background: #ece8e1;
 }
+.move {
+  transition: transform 0.429s;
+}
+
+.moveright {
+  transform: translateX(-186px);
+}
+.moveleft {
+  transform: translateX(+186px);
+}
+
 
 @media (min-width: 800px) and (max-width: 1080px) {
   .deck {

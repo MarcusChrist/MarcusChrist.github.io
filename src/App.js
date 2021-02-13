@@ -2,7 +2,7 @@ import React from 'react';
 
 import './assets/css/cards.css';
 import { unknownCard, initialState } from './arrays/cards';
-import { shuffle } from './views/stress/utils';
+import { CardMenu, shuffle, Information, Stress, DeckCard } from './views/stress/utils';
 import deckReducer from './features/deck/deckSlice';
 // import { MovableCard } from './views/stress/movableCard';
 
@@ -33,7 +33,6 @@ function App() {
   }
 
   const useInterval = (callback, delay) => {
-    // console.log("useInterval 1")
     const savedCallback = React.useRef();
 
     // Remember the latest callback.
@@ -54,9 +53,7 @@ function App() {
   }
 
   useInterval(() => {
-    // console.log("useInterval 2")
     if (!deck.play || deck.draw || deck.eventMsg || (!deck.cards[3] && !deck.cards[4])) return;
-    console.log("useinterval körs (play, ej draw och kort finns)")
     var target1 = Number(deck.cards[3].card);
     var target2 = Number(deck.cards[4].card);
     if (target1 === target2) {
@@ -77,13 +74,11 @@ function App() {
   }, botLevel);
 
   const drop = (e) => {
-    console.log("drop");
     e.preventDefault();
+    removeFakedHover();
     if (!liftedCard || !deck.play) return;
-    console.log(liftedCard);
     var lifted = deck.cards[liftedCard.substr(5, 1)];
     var target = deck.cards[e.target.id.substr(5, 1)];
-    console.log(target);
     if (!target) return;
     var card1 = Number(lifted.card);
     var card2 = Number(target.card);
@@ -93,8 +88,6 @@ function App() {
   }
 
   const checkCards = (list) => {
-    console.log("checkCards börjar")
-    console.log(list);
     //Checks if cards are valid for play or a draw needs to be set up.
     if (!list[3] || !list[4]) return;
     var target1 = Number(list[3].card);
@@ -145,7 +138,6 @@ function App() {
   };
 
   const gameOver = (msg, score) => {
-    console.log("gameOver");
     dispatch({ type: 'deck/setEventMsg', eventMsg: msg });
     setTimeout(() => {
       refresh(score.player, score.enemy);
@@ -153,7 +145,6 @@ function App() {
   }
 
   const handleStress = (me) => {
-    console.log("handleStress");
     if (!deck.stress || !deck.play) return;
     if (me) {
       dispatch({ type: 'deck/myStress' });
@@ -163,16 +154,34 @@ function App() {
       newDraw("Fail");
     }
   }
-
   const newDraw = (msg) => {
-    console.log("newDraw")
     dispatch({ type: 'deck/setEventMsg', eventMsg: msg });
     setTimeout(() => {
-      console.log("1")
       dispatch({ type: 'deck/newDeal' });
       setTimeout(() => {
-        console.log("2")
         dispatch({ type: 'deck/play' });
+        const temp = document.getElementById("card-3-2")
+        if (temp) {
+          temp.className = temp.className.concat(' moveright');
+        }
+        const temp2 = document.getElementById("card-4-2")
+        if (temp2) {
+          temp2.className = temp2.className.concat(' moveleft');
+        }
+        setTimeout(() => {
+          const faked = document.getElementsByClassName("moveright");
+          if (faked && faked[0]) {
+            while(faked.length > 0){
+              faked[0].classList.remove('moveright');
+            }
+          }
+          const faked2 = document.getElementsByClassName("moveleft");
+          if (faked2 && faked2[0]) {
+            while(faked2.length > 0){
+              faked2[0].classList.remove('moveleft');
+            }
+          }
+        }, 300);
       }, 2600);
     }, 3000);
   }
@@ -189,7 +198,17 @@ function App() {
   const allowDrop = (e) => {
     e.preventDefault();
   }
+  const removeFakedHover = () => {
+    const faked = document.getElementsByClassName("fakedhover");
+    if (faked && faked[0]) {
+      while(faked.length > 0){
+        faked[0].classList.remove('fakedhover');
+      }
+    }
+  }
   const drag = (e) => {
+    removeFakedHover();
+    e.target.className = e.target.className.concat(' fakedhover');
     setLiftedCard(e.target.id);
   }
   const showReport = () => {
@@ -198,39 +217,40 @@ function App() {
   const handleStart = e => {
     newDraw("Starting...");
   }
+  
+  function MiddleCards() {
+    const temp = deck;
+    return ( 
+      <>
+        <div id="card-3-1" className="card-element target" onDrop={drop} onDragOver={allowDrop} onClick={drop}>
+          {temp.yourSlop.length > 0 ? temp.yourSlop.map((item, i) => {
+              return <img src={unknownCard.src} key={"yourslop-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px",position: "absolute"}} alt="card" draggable="false" />
+            })
+            : ""}
+          {temp.cards[3] && (temp.play || temp.eventMsg) ? 
+            // <DeckCard card={deck.cards[3]} id="card-3-2" length={deck.yourSlop.length} />
+            <img id="card-3-2" src={temp.cards[3].src} className="deckcard move" style={{marginTop: "-" + (temp.yourSlop.length * 2) + "px", marginLeft: "-" + temp.yourSlop.length + "px",position: "absolute"}} alt="card" draggable="false" />
+            : ""}
+        </div>
+        <div id="card-4-1" className="card-element target" onDrop={drop} onDragOver={allowDrop} onClick={drop}>
+          {temp.mySlop.length > 0 ? temp.mySlop.map((item, i) => {
+              return <img src={unknownCard.src} key={"myslop-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px",position: "absolute"}} alt="card" draggable="false" />
+            })
+            : ""}
+          {temp.cards[4] && (temp.play || temp.eventMsg) ? 
+            // <DeckCard card={deck.cards[4]} id="card-4-2" length={deck.mySlop.length} />
+            <img id="card-4-2" src={temp.cards[4].src} className="deckcard move" style={{marginTop: "-" + (temp.mySlop.length * 2) + "px", marginLeft: "-" + temp.mySlop.length + "px",position: "absolute"}} alt="card" draggable="false" />
+            : ""}
+        </div>
+      </>
+    )
+  }
+  console.log(deck);
   return (
     <div className="container">
-      {deck.paused ? <div className="paused" onClick={handlePause}>
-        <span className="pausedtext"><h1>Information</h1><h3>Game round</h3>
-          Stress is quite special unlike other games. In Stress, both players play at the same time and as fast as they want. Color does not matter in this games.
-          <br /><br /><h3>General rules</h3>
-          Once the cards in the middle (1 from each deck) are dealt both players can deal their own cards on top of them. But this can only be done if the player's card is a denomination higher or lower than the game stack. So if there is a 4 in one pile and one player has a 5, 6 and a 9 then the player can first put a 5, then a 6. But the player may not add his 9 to the game pile becouse the 9 is not a denomination higher or lower of a 7. Ace counts as 14 and 1 so you can only add it on a king or a 2.
-          <br /><br /><h3>Refilling of cards</h3>
-          When you lay cards, new cards from the player's deck of cards will move to your action cards.
-          <br /><br /><h3>Stress</h3>
-          If both cards in the middle have equal numbers a "HIT" button will be displayed. Hit the button and your enemy will gets both piles added to their deck.
-          <br /><br /><h3>Goal</h3>
-          To get rid of all your cards.
-          <br /><h2>Click anywhere to unpause.</h2></span>
-      </div> : ""}
-      {deck.stress ? <>
-        <div className="stressBtn" onClick={handleMyStress}>HIT</div>
-        <img src={unknownCard.src} className="spinners top-left" alt="logo" />
-        <img src={unknownCard.src} className="spinners top-right" alt="logo" />
-        <img src={unknownCard.src} className="spinners bottom-left" alt="logo" />
-        <img src={unknownCard.src} className="spinners bottom-right" alt="logo" />
-      </> : ""}
-      <div className="cardmenu">
-        {/* <button onClick={showReport}>{"my s: " + deck.mySlop.length + " your s: " + deck.yourSlop.length + " my: " + deck.myDeck.length + " y: " + deck.yourDeck.length +
-          " c: " + deck.cards.length + " total: " + (deck.mySlop.length + deck.yourSlop.length + deck.myDeck.length + deck.yourDeck.length + deck.cards.length)}</button> */}
-        
-        <button className={deck.paused ? "btnpressed btnpaused" : ""} onClick={handlePause}>Information</button>
-        <button className={botLevel === 5000 ? "btnpressed" : ""} onClick={handleLevel(5000)}>Easy</button>
-        <button className={botLevel === 3700 ? "btnpressed" : ""} onClick={handleLevel(3700)}>Medium</button>
-        <button className={botLevel === 2400 ? "btnpressed" : ""} onClick={handleLevel(2400)}>Hard</button>
-        <button className={botLevel === 1100 ? "btnpressed" : ""} onClick={handleLevel(1100)}>Extreme</button>
-
-      </div>
+      {deck.paused ? <Information handlePause={handlePause} /> : "" }
+      {deck.stress ? <Stress handleMyStress={handleMyStress} /> : "" }
+      <CardMenu botLevel={botLevel} paused={deck.paused} handleLevel={handleLevel} handlePause={handlePause} />
       <div className="scoreboard">{deck.score.player + " - " + deck.score.enemy}</div>
       {!deck.play && !deck.eventMsg && !deck.draw ? <div className="startbtn" onClick={handleStart}><div className="startbtndiv"><button><p>
         <span className="bg"></span><span className="base"></span><span className="text">Click here to start</span></p></button></div></div> : ""}
@@ -256,28 +276,11 @@ function App() {
       <div className="row">
         <div className="deck card-element sidedecks">
           {deck.yourDeck.length > 0 ? deck.yourDeck.map((item, i) => {
-              return <img src={unknownCard.src} key={"yourdeck-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px", position: "absolute"}} alt="card" draggable="false" />
+              return <img src={unknownCard.src} key={"yourdeck-" + i} id={"yourdeck-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px", position: "absolute"}} alt="card" draggable="false" />
             })
             : ""}
         </div>
-        <div id="card-3-1" className="card-element target" onDrop={drop} onDragOver={allowDrop} onClick={drop}>
-          {deck.yourSlop.length > 0 ? deck.yourSlop.map((item, i) => {
-              return <img src={unknownCard.src} key={"yourslop-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px",position: "absolute"}} alt="card" draggable="false" />
-            })
-            : ""}
-          {deck.cards[3] && (deck.play || deck.eventMsg) ? 
-            <img id="card-3-2" src={deck.cards[3].src} className="deckcard" style={{marginTop: "-" + (deck.yourSlop.length * 2) + "px", marginLeft: "-" + deck.yourSlop.length + "px",position: "absolute"}} alt="card" draggable="false" />
-            : ""}
-        </div>
-        <div id="card-4-1" className="card-element target" onDrop={drop} onDragOver={allowDrop} onClick={drop}>
-          {deck.mySlop.length > 0 ? deck.mySlop.map((item, i) => {
-              return <img src={unknownCard.src} key={"myslop-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px",position: "absolute"}} alt="card" draggable="false" />
-            })
-            : ""}
-          {deck.cards[4] && (deck.play || deck.eventMsg) ? 
-            <img id="card-4-2" src={deck.cards[4].src} className="deckcard" style={{marginTop: "-" + (deck.mySlop.length * 2) + "px", marginLeft: "-" + deck.mySlop.length + "px",position: "absolute"}} alt="card" draggable="false" />
-            : ""}
-        </div>
+        <MiddleCards/>
         <div className="deck card-element sidedecks">
           {deck.myDeck.length > 0 ? deck.myDeck.map((item, i) => {
               return <img src={unknownCard.src} key={"mydeck-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px",position: "absolute"}} alt="card" draggable="false" />
