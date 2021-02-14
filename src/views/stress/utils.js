@@ -3,19 +3,19 @@ import React from 'react';
 import { deckArray, unknownCard } from '../../arrays/cards';
 import '../../assets/css/cards.css';
 
-const cacheImages = async (srcArray) => {
+// const cacheImages = async (srcArray) => {
     
-  const promises = await srcArray.map((card) => {
-    return new Promise(function (resolve, reject) {
-      const img = new Image();
-      img.src = card.src;
-      img.onload = resolve();
-      img.onerror = reject();
-    });
-  });
+//   const promises = await srcArray.map((card) => {
+//     return new Promise(function (resolve, reject) {
+//       const img = new Image();
+//       img.src = card.src;
+//       img.onload = resolve();
+//       img.onerror = reject();
+//     });
+//   });
 
-  await Promise.all(promises);
-};
+//   await Promise.all(promises);
+// };
 export const shuffle = async () => {
     let tempDeck = [...deckArray];
     let randomCard;
@@ -26,7 +26,7 @@ export const shuffle = async () => {
       tempDeck[i] = tempDeck[randomCard];
       tempDeck[randomCard] = tempX;
     }
-    cacheImages(tempDeck);
+    // cacheImages(tempDeck);
     var cards = [unknownCard, unknownCard, unknownCard, null, null, unknownCard, unknownCard, unknownCard];
     var deck1 = tempDeck.slice(0, 26);
     var deck2 = tempDeck.slice(26,52);
@@ -64,7 +64,7 @@ export class Information extends React.Component {
           <br /><br /><h3>Refilling of cards</h3>
           When you lay cards, new cards from the player's deck of cards will move to your action cards.
           <br /><br /><h3>Stress</h3>
-          If both cards in the middle have equal numbers a "HIT" button will be displayed. Hit the button and your enemy will gets both piles added to their deck.
+          If both cards in the middle have equal numbers a "STRESS" button will be displayed at a random position. Hit the button and your enemy will gets both piles added to their deck.
           <br /><br /><h3>Goal</h3>
           To get rid of all your cards.
           <br /><h2>Click anywhere to unpause.</h2></span>
@@ -75,9 +75,11 @@ export class Information extends React.Component {
 
 export class Stress extends React.Component {
   render(){
+    const left = Math.random() * (window.innerWidth - 150);
+    const top = Math.random() * (window.innerHeight - 60);
     return (
       <>
-        <div className="stressBtn" onClick={this.props.handleMyStress}>HIT</div>
+        <div className="stressBtn" onClick={this.props.handleMyStress} style={{left: left + "px", top: top + "px"}}>S T R E S S</div>
         <img src={unknownCard.src} className="spinners top-left" alt="logo" />
         <img src={unknownCard.src} className="spinners top-right" alt="logo" />
         <img src={unknownCard.src} className="spinners bottom-left" alt="logo" />

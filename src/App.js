@@ -3,6 +3,7 @@ import React from 'react';
 import './assets/css/cards.css';
 import { unknownCard, initialState, deckArray } from './arrays/cards';
 import { CardMenu, shuffle, Information, Stress } from './views/stress/utils';
+import { loadCache, SuspenseImg } from './views/stress/caching';
 import deckReducer from './features/deck/deckSlice';
 // import { MovableCard } from './views/stress/movableCard';
 
@@ -10,47 +11,22 @@ function App() {
   const [deck, dispatch] = React.useReducer(deckReducer, initialState) 
   const [liftedCard, setLiftedCard] = React.useState(null);
   const [botLevel, setBotLevel] = React.useState(5000);
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(null);
 
   //setup the game on component did mount
   React.useEffect(() => {
-    cacheImages(deckArray);
-    
-    // const promises = deckArray.map((card) => {
-    //   return new Promise(function (resolve, reject) {
-    //     const img = new Image();
-    //     img.src = card.src;
-    //     img.onload = resolve();
-    //     img.onerror = reject();
-    //   });
-    // });
+    const tempImgs = deckArray.map((item) => {
+      return (
+        item.src
+      )
+    });
+    tempImgs.push(unknownCard.src);
+    loadCache(tempImgs);
   
     // Promise.all(promises);
     refresh(0,0);
   }, []);
   
-  const cacheImages = async (srcArray) => {
-    
-    const promises = await srcArray.map((card) => {
-      return new Promise(function (resolve, reject) {
-        const img = new Image();
-        img.src = card.src;
-        img.onload = resolve();
-        img.onerror = reject();
-      });
-    });
-  
-    const unknown = new Promise(function (resolve, reject) {
-      const img = new Image();
-      img.src = unknownCard.src;
-      img.onload = resolve();
-      img.onerror = reject();
-    });
-  
-    await Promise.all(promises);
-    setLoading(false);
-    console.log("nu")
-  };
 
   //validade cards in play for stress, new draw or gameover.
   React.useEffect(() => { 
@@ -63,6 +39,7 @@ function App() {
     shuffle().then((result) => {
       dispatch({ type: 'deck/shuffle', myDeck: result[0], yourDeck: result[1], cards: result[2], player: player, enemy: enemy });
     }).then(() => {
+      setLoading(1);
       setTimeout(() => {
         for (let i = 0; i < 8; i++) {
           if (i === 3) {
@@ -72,6 +49,9 @@ function App() {
             moveCard(i, i < 4 ? "dealMyCard" : "dealYourCard", "");
           }, i * 300);
         }
+        setTimeout(() => {
+          setLoading(2);
+        }, 1800);
       }, 2000);
     })
   }
@@ -122,17 +102,18 @@ function App() {
   }, botLevel);
 
   const moveCard = (cardNr, type, target) => {
-    console.log(type);
-    const temp = document.getElementById("card-" + cardNr.toString());
+    const temp = document.getElementById("card-" + cardNr);
     if (temp) {
-      temp.className = temp.className.concat('move-' + cardNr.toString()).replace("invisible","");
+      console.log(temp);
+      temp.className = temp.className.concat(' move-' + cardNr).replace("invisible","");
     }
     dispatch({ type: 'deck/' + type, lifted: cardNr, target: target, card: cardNr});
     setTimeout(() => {
-      const faked = document.getElementsByClassName("move-" + cardNr.toString());
+      const faked = document.getElementsByClassName("move-" + cardNr);
       if (faked && faked[0]) {
         while(faked.length > 0){
-          faked[0].classList.remove('move-' + cardNr.toString());
+          console.log(faked);
+          faked[0].classList.remove('move-' + cardNr);
         }
       }
     }, 100);
@@ -235,25 +216,25 @@ function App() {
       dispatch({ type: 'deck/newDeal' });
       setTimeout(() => {
         const temp = document.getElementById("card-3-2")
-        if (temp) {
-          temp.className = temp.className.concat('moveright');
-        }
         const temp2 = document.getElementById("card-4-2")
+        if (temp) {
+          temp.className = temp.className.concat(' move-3');
+        }
         if (temp2) {
-          temp2.className = temp2.className.concat('moveleft');
+          temp2.className = temp2.className.concat(' move-4');
         }
         dispatch({ type: 'deck/play' });
         setTimeout(() => {
-          const faked = document.getElementsByClassName("moveright");
+          const faked = document.getElementsByClassName("move-3");
+          const faked2 = document.getElementsByClassName("move-4");
           if (faked && faked[0]) {
             while(faked.length > 0){
-              faked[0].classList.remove('moveright');
+              faked[0].classList.remove('move-3');
             }
           }
-          const faked2 = document.getElementsByClassName("moveleft");
           if (faked2 && faked2[0]) {
             while(faked2.length > 0){
-              faked2[0].classList.remove('moveleft');
+              faked2[0].classList.remove('move-4');
             }
           }
         }, 100);
@@ -292,6 +273,7 @@ function App() {
   const handleStart = e => {
     // refresh(0,0)
     newDraw("Starting...");
+    setLoading(3);
   }
   
   function MiddleCards() {
@@ -300,22 +282,26 @@ function App() {
       <>
         <div id="card-3-1" className="card-element target" onDrop={drop} onDragOver={allowDrop} onClick={drop}>
           {temp.yourSlop.length > 0 ? temp.yourSlop.map((item, i) => {
-              return <img src={unknownCard.src} key={"yourslop-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px",position: "absolute"}} alt="card" draggable="false" />
+              return <SuspenseImg src={unknownCard.src} key={"yourslop-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px",position: "absolute"}} alt="card" draggable="false" />
+              // <img src={unknownCard.src} key={"yourslop-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px",position: "absolute"}} alt="card" draggable="false" />
             })
             : ""}
           {temp.cards[3] && (temp.play || temp.eventMsg) ? 
-            // <DeckCard card={deck.cards[3]} id="card-3-2" length={deck.yourSlop.length} />
-            <img id="card-3-2" src={temp.cards[3].src} className="deckcard move" style={{marginTop: "-" + (temp.yourSlop.length * 2) + "px", marginLeft: "-" + temp.yourSlop.length + "px",position: "absolute"}} alt="card" draggable="false" />
+            // <DeckCard card={deck.cards[3]} id="card-3-2" length={deck.yourSlop.length} /> 
+            <SuspenseImg id="card-3-2" src={temp.cards[3].src} className="deckcard move" style={{marginTop: "-" + (temp.yourSlop.length * 2) + "px", marginLeft: "-" + temp.yourSlop.length + "px",position: "absolute"}} alt="card" draggable="false" />
+            // <img id="card-3-2" src={temp.cards[3].src} className="deckcard move" style={{marginTop: "-" + (temp.yourSlop.length * 2) + "px", marginLeft: "-" + temp.yourSlop.length + "px",position: "absolute"}} alt="card" draggable="false" />
             : ""}
         </div>
         <div id="card-4-1" className="card-element target" onDrop={drop} onDragOver={allowDrop} onClick={drop}>
           {temp.mySlop.length > 0 ? temp.mySlop.map((item, i) => {
-              return <img src={unknownCard.src} key={"myslop-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px",position: "absolute"}} alt="card" draggable="false" />
+              return  <SuspenseImg src={unknownCard.src} key={"myslop-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px",position: "absolute"}} alt="card" draggable="false" />
+              // <img src={unknownCard.src} key={"myslop-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px",position: "absolute"}} alt="card" draggable="false" />
             })
             : ""}
           {temp.cards[4] && (temp.play || temp.eventMsg) ? 
             // <DeckCard card={deck.cards[4]} id="card-4-2" length={deck.mySlop.length} />
-            <img id="card-4-2" src={temp.cards[4].src} className="deckcard move" style={{marginTop: "-" + (temp.mySlop.length * 2) + "px", marginLeft: "-" + temp.mySlop.length + "px",position: "absolute"}} alt="card" draggable="false" />
+            <SuspenseImg id="card-4-2" src={temp.cards[4].src} className="deckcard move" style={{marginTop: "-" + (temp.mySlop.length * 2) + "px", marginLeft: "-" + temp.mySlop.length + "px",position: "absolute"}} alt="card" draggable="false" />
+            // <img id="card-4-2" src={temp.cards[4].src} className="deckcard move" style={{marginTop: "-" + (temp.mySlop.length * 2) + "px", marginLeft: "-" + temp.mySlop.length + "px",position: "absolute"}} alt="card" draggable="false" />
             : ""}
         </div>
       </>
@@ -324,43 +310,48 @@ function App() {
   // console.log(deck.cards.length + deck.mySlop.length + deck.yourSlop.length + deck.myDeck.length + deck.yourDeck.length);
   return (
     <div className="container">
-      {loading ? "" : <>
+      {!loading ? "" : <>
       { deck.stress ? <Stress handleMyStress={handleMyStress} /> : "" }
       { deck.paused ? <Information handlePause={handlePause} /> : "" }
       <CardMenu botLevel={botLevel} paused={deck.paused} handleLevel={handleLevel} handlePause={handlePause} />
       <div className="scoreboard">{deck.score.player + " - " + deck.score.enemy}</div>
-      {!deck.play && !deck.eventMsg && !deck.draw ? <div className="startbtn" onClick={handleStart}><div className="startbtndiv"><button><p>
+      {loading === 2 ? <div className="startbtn" onClick={handleStart}><div className="startbtndiv"><button><p>
         <span className="bg"></span><span className="base"></span><span className="text">Click here to start</span></p></button></div></div> : ""}
       {deck.eventMsg ? <div className="eventmsg">{deck.eventMsg}</div> : ""}
       {deck.draw ? <div className="countdown"></div> : ""}
       <div className="row">
         <div className="card-element yours">
           {deck.cards[5] ?
-            <img id="card-5" src={deck.cards[5].src} className="deckcard move invisible" alt="card" draggable="false" />
+          <SuspenseImg id="card-5" src={deck.cards[5].src} className="deckcard move invisible" alt="card" draggable="false" />
+            // <img id="card-5" src={deck.cards[5].src} className="deckcard move invisible" alt="card" draggable="false" />
             : ""}
         </div>
         <div className="card-element yours">
           {deck.cards[6] ?
-            <img id="card-6" src={deck.cards[6].src} className="deckcard move invisible" alt="card" draggable="false" />
+          <SuspenseImg id="card-6" src={deck.cards[6].src} className="deckcard move invisible" alt="card" draggable="false" />
+            // <img id="card-6" src={deck.cards[6].src} className="deckcard move invisible" alt="card" draggable="false" />
             : ""}
         </div>
         <div className="card-element yours">
           {deck.cards[7] ?
-            <img id="card-7" src={deck.cards[7].src} className="deckcard move invisible" alt="card" draggable="false" />
+          <SuspenseImg id="card-7" src={deck.cards[7].src} className="deckcard move invisible" alt="card" draggable="false" />
+            // <img id="card-7" src={deck.cards[7].src} className="deckcard move invisible" alt="card" draggable="false" />
             : ""}
         </div>
       </div>
       <div className="row">
         <div className="deck card-element sidedecks">
           {deck.yourDeck.length > 0 ? deck.yourDeck.map((item, i) => {
-              return <img src={unknownCard.src} key={"yourdeck-" + i} id={"yourdeck-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px", position: "absolute"}} alt="card" draggable="false" />
+              return <SuspenseImg src={unknownCard.src} key={"yourdeck-" + i} id={"yourdeck-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px", position: "absolute"}} alt="card" draggable="false" />
+              // <img src={unknownCard.src} key={"yourdeck-" + i} id={"yourdeck-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px", position: "absolute"}} alt="card" draggable="false" />
             })
             : ""}
         </div>
         <MiddleCards/>
         <div className="deck card-element sidedecks">
           {deck.myDeck.length > 0 ? deck.myDeck.map((item, i) => {
-              return <img src={unknownCard.src} key={"mydeck-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px",position: "absolute"}} alt="card" draggable="false" />
+              return <SuspenseImg src={unknownCard.src} key={"mydeck-" + i} id={"mydeck-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px", position: "absolute"}} alt="card" draggable="false" />
+              //  <img src={unknownCard.src} key={"mydeck-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px",position: "absolute"}} alt="card" draggable="false" />
             })
             : ""}
         </div>
@@ -368,19 +359,22 @@ function App() {
       <div className="row">
         <div className="card-element my">
           {deck.cards[0] ?
-            <img id={"card-0"} src={deck.cards[0].src} className="deckcard movable move invisible" alt="card" draggable="true" onDragStart={drag} onClick={drag} />
+          <SuspenseImg id={"card-0"} src={deck.cards[0].src} className="deckcard movable move invisible" alt="card" draggable="true" onDragStart={drag} onClick={drag} />
+            // <img id={"card-0"} src={deck.cards[0].src} className="deckcard movable move invisible" alt="card" draggable="true" onDragStart={drag} onClick={drag} />
             // <MovableCard key="0" startx={340} starty={487} card={deck.cards[0]} cardNumber={"0"} drag={drag} handleMovableCard={handleMovableCard}/>
             : ""}
         </div>
         <div className="card-element my">
           {deck.cards[1] ?
-            <img id={"card-1"} src={deck.cards[1].src} className="deckcard movable move invisible" alt="card" draggable="true" onDragStart={drag} onClick={drag}/>
+          <SuspenseImg id={"card-1"} src={deck.cards[1].src} className="deckcard movable move invisible" alt="card" draggable="true" onDragStart={drag} onClick={drag} />
+            // <img id={"card-1"} src={deck.cards[1].src} className="deckcard movable move invisible" alt="card" draggable="true" onDragStart={drag} onClick={drag}/>
             // <MovableCard key="1" startx={460} starty={487} card={deck.cards[1]} cardNumber={"1"} drag={drag} handleMovableCard={handleMovableCard} /> */}
              : ""} 
         </div>
         <div className="card-element my">
           {deck.cards[2] ?
-            <img id={"card-2"} src={deck.cards[2].src} className="deckcard movable move invisible" alt="card" draggable="true" onDragStart={drag} onClick={drag}/>
+          <SuspenseImg id={"card-2"} src={deck.cards[2].src} className="deckcard movable move invisible" alt="card" draggable="true" onDragStart={drag} onClick={drag} />
+            // <img id={"card-2"} src={deck.cards[2].src} className="deckcard movable move invisible" alt="card" draggable="true" onDragStart={drag} onClick={drag}/>
             // <MovableCard key="2" startx={580} starty={487} card={deck.cards[2]} cardNumber={"2"} drag={drag} handleMovableCard={handleMovableCard} />
             : ""}
         </div>

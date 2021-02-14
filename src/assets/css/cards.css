@@ -59,13 +59,13 @@ h3 {
   cursor: pointer;
   height: 100%;
   width: 100%;
-  z-index:11;
+  z-index: 19;
   overflow: hidden;
 }
 .pausedtext {
   color: white;
   font-size: 16px;
-  z-index: 1;
+  z-index: 20;
   position: fixed;
   text-align: center;
   /* width: 100vh; */
@@ -147,16 +147,21 @@ button:hover {
   width: 100%;
   font-size: 28vh;
   position: absolute;
-  color: white;
+  color: rgb(255, 217, 0);
   content: "READY";
   -webkit-animation: pulsate 3s ease-out;
-  animation: pulsate 3s ease-out;
+     -moz-animation: pulsate 3s ease-out;
+      -ms-animation: pulsate 3s ease-out;
+       -o-animation: pulsate 3s ease-out;
+          animation: pulsate 3s ease-out;
   z-index: 9;
 }
 .btnpressed {
   background: #e5e5e5;
   -webkit-box-shadow: inset 0px 0px 5px #c1c1c1;
      -moz-box-shadow: inset 0px 0px 5px #c1c1c1;
+      -ms-box-shadow: inset 0px 0px 5px #c1c1c1;
+       -o-box-shadow: inset 0px 0px 5px #c1c1c1;
           box-shadow: inset 0px 0px 5px #c1c1c1;
    outline: none;
 }
@@ -168,33 +173,29 @@ button:hover {
   font-size: 11vh;
   position: absolute;
   color: white;
-  animation: fadeIn ease 2.5s;
   -webkit-animation: fadeIn ease 2.5s;
-  -moz-animation: fadeIn ease 2.5s;
-  -o-animation: fadeIn ease 2.5s;
-  -ms-animation: fadeIn ease 2.5s;
+     -moz-animation: fadeIn ease 2.5s;
+      -ms-animation: fadeIn ease 2.5s;
+       -o-animation: fadeIn ease 2.5s;
+          animation: fadeIn ease 2.5s;
   z-index: 9;
+  color: rgb(255, 217, 0);
 }
 
 .stressBtn {
-  top: 40%;
-  left:0;
-  right:0;
-  margin-left:auto;
-  margin-right:auto;
-  width: 5%;
-  height: 7%;
+  width: max-content;
+  height: max-content;
   font-size: 5vh;
   position: absolute;
   color: rgb(255, 217, 0);
   font-weight: 700;
-  padding: 1em;
-  -webkit-animation: fadeIn ease 0.3s, wiggle 0.2s 0s infinite ease-in;
-  animation: fadeIn ease 0.3s, wiggle 0.2s 0s infinite ease-in;
-  -moz-animation: fadeIn ease 0.3s;
-  -o-animation: fadeIn ease 0.3s;
-  -ms-animation: fadeIn ease 0.3s;
-  z-index: 10;
+  /* padding: 1em; */
+  -webkit-animation: fadeIn ease 0.4s, wiggle 0.3 0s infinite ease-in;
+  animation: fadeIn ease 0.4s, wiggle 0.3s 0s infinite ease-in;
+  -moz-animation: fadeIn ease 0.4;
+  -o-animation: fadeIn ease 0.4;
+  -ms-animation: fadeIn ease 0.4;
+  z-index: 15;
 }
 
 .stressBtn:hover {
@@ -281,7 +282,7 @@ div .startbtn button {
   height: 34px;
   line-height: 34px;
   box-sizing: border-box;
-  z-index: 1;
+  z-index: 3;
   left: 0;
   width: 100%;
   position: relative;
@@ -290,7 +291,7 @@ div .startbtn button {
 .startbtn button p span.base {
   box-sizing: border-box;
   position: absolute;
-  z-index: 2;
+  z-index: 4;
   width: 100%;
   height: 100%;
   left: 0;
@@ -312,12 +313,12 @@ div .startbtn button {
   background: #ff4655;
   width: 0;
   height: 100%;
-  z-index: 3;
+  z-index: 5;
   transition: 0.3s ease-out all;
   transform: skewX(-10deg);
 }
 .startbtn button p span.text {
-  z-index: 4;
+  z-index: 6;
   width: 100%;
   height: 100%;
   position: absolute;
@@ -333,7 +334,7 @@ div .startbtn button {
   background: #0f1923;
   position: absolute;
   transition: 0.3s ease-out all;
-  z-index: 5;
+  z-index: 7;
 }
 .startbtn button p:hover {
   color: #ece8e1;
@@ -346,34 +347,36 @@ div .startbtn button {
 }
 
 .move {
-  transition: transform 0.056s;
+  transition: transform 0.276s;
+  position: relative;
+  z-index: 1;
 }
 .invisible {
   display: none;
 }
-.moveright {
-  transform: translateX(-186px);
-}
-.moveleft {
-  transform: translateX(+186px);
-}
 .move-0 {
-  transform: translateY(-180px) translateX(+336px);
+  transform: translateY(-180px) translateX(+346px);
 }
 .move-1 {
-  transform: translateY(-180px) translateX(+216px);
+  transform: translateY(-180px) translateX(+231px);
 }
 .move-2 {
-  transform: translateY(-180px) translateX(+106px);
+  transform: translateY(-180px) translateX(+113px);
+}
+.move-3 {
+  transform: translateX(-186px);
+}
+.move-4 {
+  transform: translateX(+186px);
 }
 .move-5 {
-  transform: translateY(+230px) translateX(-106px);
+  transform: translateY(+230px) translateX(-113px);
 }
 .move-6 {
-  transform: translateY(+230px) translateX(-216px);
+  transform: translateY(+230px) translateX(-231px);
 }
 .move-7 {
-  transform: translateY(+230px) translateX(-336px);
+  transform: translateY(+230px) translateX(-346px);
 }
 
 
@@ -558,6 +561,156 @@ div .startbtn button {
 }
 
 @-webkit-keyframes pulsate {
+  0% {
+    content: "READY";
+    opacity: 0.5;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  10% {
+    content: "READY";
+    opacity: 1.0;
+    -webkit-transform: scale(2.0);
+    transform: scale(2.0);
+  }
+  29% {
+    content: "READY";
+    opacity: 0.5;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  30% {
+    content: "SET";
+    opacity: 0.5;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  45% {
+    content: "SET";
+    opacity: 1.0;
+    -webkit-transform: scale(2.0);
+    transform: scale(2.0);
+  }
+  69% {
+    content: "SET";
+    opacity: 0.5;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  70% {
+    content: "GO";
+    opacity: 1;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  100% {
+    content: "GO";
+    opacity: 0;
+    -webkit-transform: scale(8.0);
+    transform: scale(8.0);
+  }
+}
+@-moz-keyframes pulsate {
+  0% {
+    content: "READY";
+    opacity: 0.5;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  10% {
+    content: "READY";
+    opacity: 1.0;
+    -webkit-transform: scale(2.0);
+    transform: scale(2.0);
+  }
+  29% {
+    content: "READY";
+    opacity: 0.5;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  30% {
+    content: "SET";
+    opacity: 0.5;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  45% {
+    content: "SET";
+    opacity: 1.0;
+    -webkit-transform: scale(2.0);
+    transform: scale(2.0);
+  }
+  69% {
+    content: "SET";
+    opacity: 0.5;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  70% {
+    content: "GO";
+    opacity: 1;
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+  100% {
+    content: "GO";
+    opacity: 0;
+    -webkit-transform: scale(8.0);
+    transform: scale(8.0);
+  }
+}
+  @-o-keyframes pulsate {
+    0% {
+      content: "READY";
+      opacity: 0.5;
+      -webkit-transform: scale(1.0);
+      transform: scale(1.0);
+    }
+    10% {
+      content: "READY";
+      opacity: 1.0;
+      -webkit-transform: scale(2.0);
+      transform: scale(2.0);
+    }
+    29% {
+      content: "READY";
+      opacity: 0.5;
+      -webkit-transform: scale(1.0);
+      transform: scale(1.0);
+    }
+    30% {
+      content: "SET";
+      opacity: 0.5;
+      -webkit-transform: scale(1.0);
+      transform: scale(1.0);
+    }
+    45% {
+      content: "SET";
+      opacity: 1.0;
+      -webkit-transform: scale(2.0);
+      transform: scale(2.0);
+    }
+    69% {
+      content: "SET";
+      opacity: 0.5;
+      -webkit-transform: scale(1.0);
+      transform: scale(1.0);
+    }
+    70% {
+      content: "GO";
+      opacity: 1;
+      -webkit-transform: scale(1.0);
+      transform: scale(1.0);
+    }
+    100% {
+      content: "GO";
+      opacity: 0;
+      -webkit-transform: scale(8.0);
+      transform: scale(8.0);
+    }
+  }
+@-ms-keyframes pulsate {
   0% {
     content: "READY";
     opacity: 0.5;
