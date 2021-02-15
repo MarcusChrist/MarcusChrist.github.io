@@ -20,7 +20,6 @@ export default function deckReducer(state = initialState, action) {
                 ...state,
                 mySlop: action.target === 4 ? [...state.mySlop, state.cards[action.target]] : [...state.mySlop],
                 yourSlop: action.target === 3 ? [...state.yourSlop, state.cards[action.target]] : [...state.yourSlop],
-                // sloppy: [...state.sloppy, state.cards[action.target]],
                 cards: state.cards.map((item, x) => {
                     if (x === action.lifted) {
                         return state.myDeck[0];
@@ -37,7 +36,6 @@ export default function deckReducer(state = initialState, action) {
                 ...state,
                 mySlop: action.target === 4 ? [...state.mySlop, state.cards[action.target]] : [...state.mySlop],
                 yourSlop: action.target === 3 ? [...state.yourSlop, state.cards[action.target]] : [...state.yourSlop],
-                // sloppy: [...state.sloppy, state.cards[action.target]],
                 cards: state.cards.map((item, x) => {
                     if (x === action.lifted) {
                         return state.yourDeck[0];
@@ -54,7 +52,6 @@ export default function deckReducer(state = initialState, action) {
                 ...state,
                 mySlop: state.cards[4] ? [...state.mySlop, state.cards[4]] : [...state.mySlop],
                 yourSlop: state.cards[3] ? [...state.yourSlop, state.cards[3]] : [...state.yourSlop],
-                // sloppy: state.cards[3] && state.cards[4] ? [...state.sloppy, state.cards[3], state.cards[4]] : [...state.sloppy],
                 cards: state.cards.map((item, x) => {
                     if (x === 3) {
                       return state.yourDeck[0];

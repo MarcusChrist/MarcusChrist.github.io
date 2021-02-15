@@ -16,22 +16,22 @@ h3 {
   position: fixed;
   width: 10vmin;
   pointer-events: none;
-}
-.top-left{
-  left: 10vmin;
-  top: 5vmin;
-}
-.top-right{
-  right: 10vmin;
-  top: 5vmin;
-}
-.bottom-left{
-  left: 10vmin;
-  bottom: 5vmin;
-}
-.bottom-right{
-  right: 10vmin;
-  bottom: 5vmin;
+  .top-left{
+    left: 10vmin;
+    top: 5vmin;
+  }
+  .top-right{
+    right: 10vmin;
+    top: 5vmin;
+  }
+  .bottom-left{
+    left: 10vmin;
+    bottom: 5vmin;
+  }
+  .bottom-right{
+    right: 10vmin;
+    bottom: 5vmin;
+  }
 }
 
 /* Cards */
@@ -137,15 +137,6 @@ h3 {
 button:hover {
   cursor: pointer;
 }
-.btnpressed {
-  background: #e5e5e5;
-  -webkit-box-shadow: inset 0px 0px 5px #c1c1c1;
-     -moz-box-shadow: inset 0px 0px 5px #c1c1c1;
-      -ms-box-shadow: inset 0px 0px 5px #c1c1c1;
-       -o-box-shadow: inset 0px 0px 5px #c1c1c1;
-          box-shadow: inset 0px 0px 5px #c1c1c1;
-   outline: none;
-}
 .countdown::before {
   text-align: center;
   top: 25%;
@@ -161,6 +152,15 @@ button:hover {
        -o-animation: pulsate 3s ease-out;
           animation: pulsate 3s ease-out;
   z-index: 9;
+}
+.btnpressed {
+  background: #e5e5e5;
+  -webkit-box-shadow: inset 0px 0px 5px #c1c1c1;
+     -moz-box-shadow: inset 0px 0px 5px #c1c1c1;
+      -ms-box-shadow: inset 0px 0px 5px #c1c1c1;
+       -o-box-shadow: inset 0px 0px 5px #c1c1c1;
+          box-shadow: inset 0px 0px 5px #c1c1c1;
+   outline: none;
 }
 .eventmsg {
   text-align: center;
