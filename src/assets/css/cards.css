@@ -345,7 +345,7 @@ div .startbtn button {
 
 .move {
   transition: transform 0.276s;
-  position: relative;
+  /* position: relative; */
   z-index: 1;
 }
 .invisible {

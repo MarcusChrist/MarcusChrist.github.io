@@ -1,39 +1,18 @@
 
 import React from 'react';
-import { deckArray, unknownCard } from '../../arrays/cards';
+import { unknownCard } from '../../arrays/cards';
 import '../../assets/css/cards.css';
+import { Route } from 'react-router-dom'
 
-// const cacheImages = async (srcArray) => {
-    
-//   const promises = await srcArray.map((card) => {
-//     return new Promise(function (resolve, reject) {
-//       const img = new Image();
-//       img.src = card.src;
-//       img.onload = resolve();
-//       img.onerror = reject();
-//     });
-//   });
-
-//   await Promise.all(promises);
-// };
-export const shuffle = async () => {
-    let tempDeck = [...deckArray];
-    let randomCard;
-    let tempX;
-    for (let i = tempDeck.length - 1; i > -1; i -= 1) {
-      randomCard = Math.floor(Math.random() * i);
-      tempX = tempDeck[i];
-      tempDeck[i] = tempDeck[randomCard];
-      tempDeck[randomCard] = tempX;
-    }
-    // cacheImages(tempDeck);
-    var cards = [unknownCard, unknownCard, unknownCard, null, null, unknownCard, unknownCard, unknownCard];
-    var deck1 = tempDeck.slice(0, 26);
-    var deck2 = tempDeck.slice(26,52);
-
-    // cards.splice(3, 0, null, null);
-    return ([deck1, deck2, cards]);
-  }
+const ChangeGameButton = () => (
+  <Route render={({ history }) => (
+    <button
+      onClick={() => { history.push('/tian') }}
+    >
+      Change Game
+    </button>
+  )} />
+)
 
 export class CardMenu extends React.Component {
   render(){
@@ -42,6 +21,7 @@ export class CardMenu extends React.Component {
         {/* <button onClick={showReport}>{"my s: " + deck.mySlop.length + " your s: " + deck.yourSlop.length + " my: " + deck.myDeck.length + " y: " + deck.yourDeck.length +
           " c: " + deck.cards.length + " total: " + (deck.mySlop.length + deck.yourSlop.length + deck.myDeck.length + deck.yourDeck.length + deck.cards.length)}</button> */}
         
+        <ChangeGameButton/>
         <button className={this.props.paused ? "btnpressed btnpaused" : ""} onClick={this.props.handlePause}>Information</button>
         <button className={this.props.botLevel === 5000 ? "btnpressed" : ""} onClick={this.props.handleLevel(5000)}>Easy</button>
         <button className={this.props.botLevel === 3700 ? "btnpressed" : ""} onClick={this.props.handleLevel(3700)}>Medium</button>

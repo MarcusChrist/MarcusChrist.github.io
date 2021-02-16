@@ -1,18 +1,15 @@
 import React from 'react';
 
 export const useInterval = (callback, delay) => {
-    console.log("0")
     const savedCallback = React.useRef();
 
     // Remember the latest callback.
     React.useEffect(() => {
-        console.log("1")
       savedCallback.current = callback;
     }, [callback]);
 
     // Set up the interval.
     React.useEffect(() => {
-        console.log("2")
       function tick() {
         savedCallback.current();
       }
@@ -24,7 +21,6 @@ export const useInterval = (callback, delay) => {
 }
 
 export const botAction = (cards, moveCard, handleStress) => {
-    console.log("mu")
     var target1 = Number(cards[3].card);
     var target2 = Number(cards[4].card);
     if (target1 === target2) {

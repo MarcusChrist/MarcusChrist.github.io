@@ -1,7 +1,7 @@
 
-import { initialState } from '../../arrays/cards';
+import { initialState } from '../arrays/cards';
 
-export default function deckReducer(state = initialState, action) {
+export default function stressReducer(state = initialState, action) {
     switch (action.type) {
         case 'deck/shuffle':
             return {
@@ -101,7 +101,6 @@ export default function deckReducer(state = initialState, action) {
         case 'deck/handlePause':
             return {
                 ...state,
-                play: !state.play,
                 paused: !state.paused
             }
         case 'deck/setStress':

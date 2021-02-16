@@ -1,19 +1,20 @@
 import React from 'react';
 
-import './assets/css/cards.css';
-import { unknownCard, initialState, deckArray } from './arrays/cards';
-import { CardMenu, shuffle, Information, Stress } from './views/stress/utils';
-import { loadCache, SuspenseImg } from './views/stress/caching';
-import deckReducer from './features/deck/deckSlice';
-import { botAction, useInterval } from './views/stress/bot';
+import '../../assets/css/cards.css';
+import { unknownCard, initialState, deckArray } from '../../arrays/cards';
+import { CardMenu, Information, Stress } from './utils';
+import { loadCache, SuspenseImg, shuffle } from '../../shared/handleDecks';
+import stressReducer from '../../reducers/deckSlice';
+import { botAction, useInterval } from './bot';
 
-function App() {
-  const [deck, dispatch] = React.useReducer(deckReducer, initialState) 
+function StressGame() {
+  const [deck, dispatch] = React.useReducer(stressReducer, initialState) 
   const [liftedCard, setLiftedCard] = React.useState(null);
   const [botLevel, setBotLevel] = React.useState(5000);
   const [loading, setLoading] = React.useState(null);
 
-  //setup the game on component did mount
+  let cancelled = false;
+
   React.useEffect(() => {
     const tempImgs = deckArray.map((item) => {
       return (
@@ -23,13 +24,16 @@ function App() {
     tempImgs.push(unknownCard.src);
     loadCache(tempImgs);
   
-    // Promise.all(promises);
     refresh(0,0);
+    return () => {
+      cancelled = true;
+    };
   }, []);
   
 
   //validade cards in play for stress, new draw or gameover.
   React.useEffect(() => { 
+    if (cancelled) return;
     if (deck.play && !deck.stress && !deck.draw && !deck.eventMsg) {
       checkCards(deck.cards);
     }
@@ -37,8 +41,13 @@ function App() {
 
   const refresh = (player, enemy) => {
     shuffle().then((result) => {
-      dispatch({ type: 'deck/shuffle', myDeck: result[0], yourDeck: result[1], cards: result[2], player: player, enemy: enemy });
+      if (cancelled) return;
+      var tempCards = [unknownCard, unknownCard, unknownCard, null, null, unknownCard, unknownCard, unknownCard];
+      var tempDeck1 = result.slice(0, 26);
+      var tempDeck2 = result.slice(26,52);
+      dispatch({ type: 'deck/shuffle', myDeck: tempDeck1, yourDeck: tempDeck2, cards: tempCards, player: player, enemy: enemy });
     }).then(() => {
+      if (cancelled) return;
       setLoading(1);
       setTimeout(() => {
         for (let i = 0; i < 8; i++) {
@@ -57,7 +66,7 @@ function App() {
   }
 
   useInterval(() => {
-    if (deck.play && !deck.draw && !deck.eventMsg && deck.cards[3] && deck.cards[4]) {
+    if (deck.play && !deck.paused && !deck.draw && !deck.eventMsg && deck.cards[3] && deck.cards[4]) {
       botAction(deck.cards, moveCard, handleStress);
     }
   }, botLevel);
@@ -152,7 +161,7 @@ function App() {
         if (i === 3) i = 5;
         const temp = document.getElementById("card-" + i);
         if (temp) {
-          temp.className = temp.className.concat("invisible");
+          temp.className = temp.className.concat(" invisible");
         }
       }
       refresh(score.player, score.enemy);
@@ -175,6 +184,7 @@ function App() {
     setTimeout(() => {
       dispatch({ type: 'deck/newDeal' });
       setTimeout(() => {
+        dispatch({ type: 'deck/play' });
         const temp = document.getElementById("card-3-2")
         const temp2 = document.getElementById("card-4-2")
         if (temp) {
@@ -184,17 +194,18 @@ function App() {
           temp2.className = temp2.className.concat(' move-4');
           console.log(temp2);
         }
-        dispatch({ type: 'deck/play' });
         setTimeout(() => {
           const faked = document.getElementsByClassName("move-3");
           const faked2 = document.getElementsByClassName("move-4");
           if (faked && faked[0]) {
             while(faked.length > 0){
+              console.log(faked);
               faked[0].classList.remove('move-3');
             }
           }
           if (faked2 && faked2[0]) {
             while(faked2.length > 0){
+              console.log(faked2);
               faked2[0].classList.remove('move-4');
             }
           }
@@ -236,7 +247,11 @@ function App() {
     newDraw("Starting...");
     setLoading(3);
   }
-  
+  const changeView = () => {
+    console.log(window);
+    console.log(window);
+    // window.history.replace('/tian');
+  }
   function MiddleCards() {
     const temp = deck;
     return ( 
@@ -247,7 +262,7 @@ function App() {
             })
             : ""}
           {temp.cards[3] && (temp.play || temp.eventMsg) ? 
-            <SuspenseImg id="card-3-2" src={temp.cards[3].src} className="deckcard" style={{marginTop: "-" + (temp.yourSlop.length * 2) + "px", marginLeft: "-" + temp.yourSlop.length + "px",position: "absolute"}} alt="card" draggable="false" />
+            <SuspenseImg id="card-3-2" src={temp.cards[3].src} className="deckcard move" style={{marginTop: "-" + (temp.yourSlop.length * 2) + "px", marginLeft: "-" + temp.yourSlop.length + "px"}} alt="card" draggable="false" />
             : ""}
         </div>
         <div id="card-4-1" className="card-element target" onDrop={drop} onDragOver={allowDrop} onClick={drop}>
@@ -256,7 +271,7 @@ function App() {
             })
             : ""}
           {temp.cards[4] && (temp.play || temp.eventMsg) ? 
-            <SuspenseImg id="card-4-2" src={temp.cards[4].src} className="deckcard" style={{marginTop: "-" + (temp.mySlop.length * 2) + "px", marginLeft: "-" + temp.mySlop.length + "px",position: "absolute"}} alt="card" draggable="false" />
+            <SuspenseImg id="card-4-2" src={temp.cards[4].src} className="deckcard move" style={{marginTop: "-" + (temp.mySlop.length * 2) + "px", marginLeft: "-" + temp.mySlop.length + "px"}} alt="card" draggable="false" />
             : ""}
         </div>
       </>
@@ -267,7 +282,7 @@ function App() {
       {!loading ? "" : <>
       { deck.stress ? <Stress handleMyStress={handleMyStress} /> : "" }
       { deck.paused ? <Information handlePause={handlePause} /> : "" }
-      <CardMenu botLevel={botLevel} paused={deck.paused} handleLevel={handleLevel} handlePause={handlePause} />
+      <CardMenu botLevel={botLevel} paused={deck.paused} handleLevel={handleLevel} handlePause={handlePause} changeView={changeView}/>
       <div className="scoreboard">{deck.score.player + " - " + deck.score.enemy}</div>
       {loading === 2 ? <div className="startbtn" onClick={handleStart}><div className="startbtndiv"><button><p>
         <span className="bg"></span><span className="base"></span><span className="text">Click here to start</span></p></button></div></div> : ""}
@@ -327,4 +342,4 @@ function App() {
   );
 }
 
-export default App;
+export default StressGame;

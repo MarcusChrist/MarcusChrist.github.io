@@ -66,9 +66,14 @@ export const initialState = {
   eventMsg: null,
 };
 
-export const initialStateLifted = {
-  startPos: {x: 0, y: 0},
-  endPos: {x: 0, y: 0}
+export const initialStateTian = {
+  piles: [],
+  target: [],
+  deck: [],
+  play: false,
+  paused: false,
+  eventMsg: null,
+  score: { player: 0, enemy: 0 },
 }
 
 export const initiateCards = [
