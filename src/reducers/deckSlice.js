@@ -61,8 +61,6 @@ export default function stressReducer(state = initialState, action) {
                       return item;
                     }
                 }),
-                myDeck: state.myDeck.slice(1),
-                yourDeck: state.yourDeck.slice(1),
                 draw: true,
                 eventMsg: null,
             }
@@ -119,6 +117,8 @@ export default function stressReducer(state = initialState, action) {
                 ...state,
                 play: true,
                 draw: false,
+                myDeck: state.myDeck.slice(1),
+                yourDeck: state.yourDeck.slice(1),
             }
         case 'deck/dealMyCard':
             return {

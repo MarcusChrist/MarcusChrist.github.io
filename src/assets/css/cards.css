@@ -76,7 +76,7 @@ h3 {
   transform: translateX(-10%);
   overflow-y: scroll;
   -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  /* scrollbar-width: none;  */ /* Firefox */
 }
 ::-webkit-scrollbar {
     width: 0px;
@@ -104,13 +104,13 @@ h3 {
 .my > img:hover {
   -webkit-animation: wiggle 0.3s 0s infinite ease-in;
   animation: wiggle 0.3s 0s infinite ease-in;
-  cursor: pointer;
+  cursor: grab;
   opacity: .6;
 }
 .fakedhover {
   -webkit-animation: wiggle 0.3s 0s infinite ease-in;
   animation: wiggle 0.3s 0s infinite ease-in;
-  cursor: pointer;
+  cursor: grab;
   opacity: .6;
 }
 .target {
@@ -133,6 +133,8 @@ h3 {
   position: absolute;
   right: 1vw;
   bottom: 1vh;
+  /* text-align: center;  */
+  /* display: inline-block; */
 }
 button:hover {
   cursor: pointer;
@@ -147,6 +149,7 @@ button:hover {
    outline: none;
 }
 .countdown::before {
+  content: "READY";
   text-align: center;
   top: 25%;
   left: 0;
@@ -154,7 +157,6 @@ button:hover {
   font-size: 28vh;
   position: absolute;
   color: rgb(255, 217, 0);
-  content: "READY";
   -webkit-animation: pulsate 3s ease-out;
      -moz-animation: pulsate 3s ease-out;
       -ms-animation: pulsate 3s ease-out;
@@ -182,16 +184,16 @@ button:hover {
 .stressBtn {
   width: max-content;
   height: max-content;
-  font-size: 5vh;
+  font-size: 3vh;
   position: absolute;
   color: rgb(255, 217, 0);
   font-weight: 700;
   /* padding: 1em; */
   -webkit-animation: fadeIn ease 0.4s, wiggle 0.3 0s infinite ease-in;
-  animation: fadeIn ease 0.4s, wiggle 0.3s 0s infinite ease-in;
   -moz-animation: fadeIn ease 0.4;
   -o-animation: fadeIn ease 0.4;
   -ms-animation: fadeIn ease 0.4;
+  animation: fadeIn ease 0.4s, wiggle 0.3s 0s infinite ease-in;
   z-index: 15;
 }
 
@@ -228,11 +230,11 @@ button:hover {
   top: 24%;
   transform: translateX(-50%);
   position: absolute;
-  animation: fadeIn ease 10s;
   -webkit-animation: fadeIn ease 10s;
   -moz-animation: fadeIn ease 10s;
   -o-animation: fadeIn ease 10s;
   -ms-animation: fadeIn ease 10s;
+  animation: fadeIn ease 10s;
 }
 div .startbtndiv {
   display: flex;
@@ -376,8 +378,12 @@ div .startbtn button {
 .move-7 {
   transform: translateY(+230px) translateX(-346px);
 }
-
-
+.cardenuSlider {
+  width: 234;
+  color: "white";
+  display: "inline-block";
+}
+  
 @media (min-width: 800px) and (max-width: 1080px) {
   .deck {
     margin: 5vmin 10vmin;
@@ -396,10 +402,10 @@ div .startbtn button {
   .eventmsg {
     font-size: 8vh;
   }
-  .moveright {
+  .move-3 {
     transform: translateX(-156px);
   }
-  .moveleft {
+  .move-4 {
     transform: translateX(+156px);
   }
 }
@@ -426,10 +432,10 @@ div .startbtn button {
   .startbtn {
     top: 17.5%;
   }
-  .moveright {
+  .move-3 {
     transform: translateX(-116px);
   }
-  .moveleft {
+  .move-4 {
     transform: translateX(+116px);
   }
 }
@@ -456,10 +462,10 @@ div .startbtn button {
   .startbtn {
     top: 14.5%;
   }
-  .moveright {
+  .move-3 {
     transform: translateX(-56px);
   }
-  .moveleft {
+  .move-4 {
     transform: translateX(+56px);
   }
 }
@@ -511,251 +517,211 @@ div .startbtn button {
   0% {
     content: "READY";
     opacity: 0.5;
-    -webkit-transform: scale(1.0);
     transform: scale(1.0);
   }
   10% {
     content: "READY";
     opacity: 1.0;
-    -webkit-transform: scale(2.0);
     transform: scale(2.0);
   }
   29% {
     content: "READY";
     opacity: 0.5;
-    -webkit-transform: scale(1.0);
     transform: scale(1.0);
   }
   30% {
     content: "SET";
     opacity: 0.5;
-    -webkit-transform: scale(1.0);
     transform: scale(1.0);
   }
   45% {
     content: "SET";
     opacity: 1.0;
-    -webkit-transform: scale(2.0);
     transform: scale(2.0);
   }
   69% {
     content: "SET";
     opacity: 0.5;
-    -webkit-transform: scale(1.0);
     transform: scale(1.0);
   }
   70% {
     content: "GO";
     opacity: 1;
-    -webkit-transform: scale(1.0);
     transform: scale(1.0);
   }
   100% {
     content: "GO";
     opacity: 0;
-    -webkit-transform: scale(8.0);
     transform: scale(8.0);
   }
 }
 
 @-webkit-keyframes pulsate {
   0% {
-    content: "READY";
-    opacity: 0.5;
+    -webkit-content: "READY";
+    -webkit-opacity: 0.5;
     -webkit-transform: scale(1.0);
-    transform: scale(1.0);
   }
   10% {
-    content: "READY";
-    opacity: 1.0;
+    -webkit-content: "READY";
+    -webkit-opacity: 1.0;
     -webkit-transform: scale(2.0);
-    transform: scale(2.0);
   }
   29% {
-    content: "READY";
-    opacity: 0.5;
+    -webkit-content: "READY";
+    -webkit-opacity: 0.5;
     -webkit-transform: scale(1.0);
-    transform: scale(1.0);
   }
   30% {
-    content: "SET";
-    opacity: 0.5;
+    -webkit-content: "SET";
+    -webkit-opacity: 0.5;
     -webkit-transform: scale(1.0);
-    transform: scale(1.0);
   }
   45% {
-    content: "SET";
-    opacity: 1.0;
+    -webkit-content: "SET";
+    -webkit-opacity: 1.0;
     -webkit-transform: scale(2.0);
-    transform: scale(2.0);
   }
   69% {
-    content: "SET";
-    opacity: 0.5;
+    -webkit-content: "SET";
+    -webkit-opacity: 0.5;
     -webkit-transform: scale(1.0);
-    transform: scale(1.0);
   }
   70% {
-    content: "GO";
-    opacity: 1;
+    -webkit-content: "GO";
+    -webkit-opacity: 1;
     -webkit-transform: scale(1.0);
-    transform: scale(1.0);
   }
   100% {
-    content: "GO";
-    opacity: 0;
+    -webkit-content: "GO";
+    -webkit-opacity: 0;
     -webkit-transform: scale(8.0);
-    transform: scale(8.0);
   }
 }
 @-moz-keyframes pulsate {
   0% {
-    content: "READY";
-    opacity: 0.5;
-    -webkit-transform: scale(1.0);
-    transform: scale(1.0);
+    -moz-content: "READY";
+    -moz-opacity: 0.5;
+    -moz-transform: scale(1.0);
   }
   10% {
-    content: "READY";
-    opacity: 1.0;
-    -webkit-transform: scale(2.0);
-    transform: scale(2.0);
+    -moz-content: "READY";
+    -moz-opacity: 1.0;
+    -moz-transform: scale(2.0);
   }
   29% {
-    content: "READY";
-    opacity: 0.5;
-    -webkit-transform: scale(1.0);
-    transform: scale(1.0);
+    -moz-content: "READY";
+    -moz-opacity: 0.5;
+    -moz-transform: scale(1.0);
   }
   30% {
-    content: "SET";
-    opacity: 0.5;
-    -webkit-transform: scale(1.0);
-    transform: scale(1.0);
+    -moz-content: "SET";
+    -moz-opacity: 0.5;
+    -moz-transform: scale(1.0);
   }
   45% {
-    content: "SET";
-    opacity: 1.0;
-    -webkit-transform: scale(2.0);
-    transform: scale(2.0);
+    -moz-content: "SET";
+    -moz-opacity: 1.0;
+    -moz-transform: scale(2.0);
   }
   69% {
-    content: "SET";
-    opacity: 0.5;
-    -webkit-transform: scale(1.0);
-    transform: scale(1.0);
+    -moz-content: "SET";
+    -moz-opacity: 0.5;
+    -moz-transform: scale(1.0);
   }
   70% {
-    content: "GO";
-    opacity: 1;
-    -webkit-transform: scale(1.0);
-    transform: scale(1.0);
+    -moz-content: "GO";
+    -moz-opacity: 1;
+    -moz-transform: scale(1.0);
   }
   100% {
-    content: "GO";
-    opacity: 0;
-    -webkit-transform: scale(8.0);
-    transform: scale(8.0);
+    -moz-content: "GO";
+    -moz-opacity: 0;
+    -moz-transform: scale(8.0);
   }
 }
   @-o-keyframes pulsate {
     0% {
-      content: "READY";
-      opacity: 0.5;
-      -webkit-transform: scale(1.0);
-      transform: scale(1.0);
+      -o-content: "READY";
+      -o-opacity: 0.5;
+      -o-transform: scale(1.0);
     }
     10% {
-      content: "READY";
-      opacity: 1.0;
-      -webkit-transform: scale(2.0);
-      transform: scale(2.0);
+      -o-content: "READY";
+      -o-opacity: 1.0;
+      -o-transform: scale(2.0);
     }
     29% {
-      content: "READY";
-      opacity: 0.5;
-      -webkit-transform: scale(1.0);
-      transform: scale(1.0);
+      -o-content: "READY";
+      -o-opacity: 0.5;
+      -o-transform: scale(1.0);
     }
     30% {
-      content: "SET";
-      opacity: 0.5;
-      -webkit-transform: scale(1.0);
-      transform: scale(1.0);
+      -o-content: "SET";
+      -o-opacity: 0.5;
+      -o-transform: scale(1.0);
     }
     45% {
-      content: "SET";
-      opacity: 1.0;
-      -webkit-transform: scale(2.0);
-      transform: scale(2.0);
+      -o-content: "SET";
+      -o-opacity: 1.0;
+      -o-transform: scale(2.0);
     }
     69% {
-      content: "SET";
-      opacity: 0.5;
-      -webkit-transform: scale(1.0);
-      transform: scale(1.0);
+      -o-content: "SET";
+      -o-opacity: 0.5;
+      -o-transform: scale(1.0);
     }
     70% {
-      content: "GO";
-      opacity: 1;
-      -webkit-transform: scale(1.0);
-      transform: scale(1.0);
+      -o-content: "GO";
+      -o-opacity: 1;
+      -o-transform: scale(1.0);
     }
     100% {
-      content: "GO";
-      opacity: 0;
-      -webkit-transform: scale(8.0);
-      transform: scale(8.0);
+      -o-content: "GO";
+      -o-opacity: 0;
+      -o-transform: scale(8.0);
     }
   }
 @-ms-keyframes pulsate {
   0% {
-    content: "READY";
-    opacity: 0.5;
-    -webkit-transform: scale(1.0);
-    transform: scale(1.0);
+    -ms-content: "READY";
+    -ms-opacity: 0.5;
+    -ms-transform: scale(1.0);
   }
   10% {
-    content: "READY";
-    opacity: 1.0;
-    -webkit-transform: scale(2.0);
-    transform: scale(2.0);
+    -ms-content: "READY";
+    -ms-opacity: 1.0;
+    -ms-transform: scale(2.0);
   }
   29% {
-    content: "READY";
-    opacity: 0.5;
-    -webkit-transform: scale(1.0);
-    transform: scale(1.0);
+    -ms-content: "READY";
+    -ms-opacity: 0.5;
+    -ms-transform: scale(1.0);
   }
   30% {
-    content: "SET";
-    opacity: 0.5;
-    -webkit-transform: scale(1.0);
-    transform: scale(1.0);
+    -ms-content: "SET";
+    -ms-opacity: 0.5;
+    -ms-transform: scale(1.0);
   }
   45% {
-    content: "SET";
-    opacity: 1.0;
-    -webkit-transform: scale(2.0);
-    transform: scale(2.0);
+    -ms-content: "SET";
+    -ms-opacity: 1.0;
+    -ms-transform: scale(2.0);
   }
   69% {
-    content: "SET";
-    opacity: 0.5;
-    -webkit-transform: scale(1.0);
-    transform: scale(1.0);
+    -ms-content: "SET";
+    -ms-opacity: 0.5;
+    -ms-transform: scale(1.0);
   }
   70% {
-    content: "GO";
-    opacity: 1;
-    -webkit-transform: scale(1.0);
-    transform: scale(1.0);
+    -ms-content: "GO";
+    -ms-opacity: 1;
+    -ms-transform: scale(1.0);
   }
   100% {
-    content: "GO";
-    opacity: 0;
-    -webkit-transform: scale(8.0);
-    transform: scale(8.0);
+    -ms-content: "GO";
+    -ms-opacity: 0;
+    -ms-transform: scale(8.0);
   }
 }
 

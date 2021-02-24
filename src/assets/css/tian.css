@@ -10,7 +10,6 @@ h1 {
     color: rgb(167, 147, 35);
     line-height: 0px;
   }
-  
   /* Spinners */
   .spinners {
     position: fixed;
@@ -123,7 +122,7 @@ h1 {
   .sidedecks {
     position: relative;
     margin-bottom: 0px!important;
-    padding-bottom: 0px!important;
+    /* padding-bottom: 0px!important; */
     /* position: "absolute"; */
   }
   .deck {
@@ -345,7 +344,7 @@ h1 {
   }
   
   .move {
-    transition: transform 0.276s;
+    transition: transform 0.076s;
     z-index: 1;
   }
   .invisible {

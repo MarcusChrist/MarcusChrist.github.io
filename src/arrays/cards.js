@@ -83,6 +83,7 @@ export const initiateCards = [
     color: "Unknown",
     index: "0",
     src: Unknown,
+    cn: " invisible",
   },
   {
     suits: "Unknown",
@@ -90,6 +91,7 @@ export const initiateCards = [
     color: "Unknown",
     index: "0",
     src: Unknown,
+    cn: " invisible",
   },
   {
     suits: "Unknown",
@@ -97,6 +99,7 @@ export const initiateCards = [
     color: "Unknown",
     index: "0",
     src: Unknown,
+    cn: " invisible",
   },
   {
     suits: "Unknown",
@@ -104,6 +107,7 @@ export const initiateCards = [
     color: "Unknown",
     index: "0",
     src: Unknown,
+    cn: " invisible",
   },
   {
     suits: "Unknown",
@@ -111,6 +115,7 @@ export const initiateCards = [
     color: "Unknown",
     index: "0",
     src: Unknown,
+    cn: " invisible",
   },
   {
     suits: "Unknown",
@@ -118,6 +123,7 @@ export const initiateCards = [
     color: "Unknown",
     index: "0",
     src: Unknown,
+    cn: " invisible",
   },
   {
     suits: "Unknown",
@@ -125,6 +131,7 @@ export const initiateCards = [
     color: "Unknown",
     index: "0",
     src: Unknown,
+    cn: " invisible",
   },
   {
     suits: "Unknown",
@@ -132,6 +139,7 @@ export const initiateCards = [
     color: "Unknown",
     index: "0",
     src: Unknown,
+    cn: " invisible",
   },
 ];
 export const unknownCard = {
@@ -140,6 +148,7 @@ export const unknownCard = {
   color: "Unknown",
   index: "0",
   src: Unknown,
+  cn: " invisible",
 }
 export const deckArray = [
     {
@@ -148,362 +157,414 @@ export const deckArray = [
       color: "red",
       index: "1",
       src: H1,
+      cn: " invisible",
     },
     {
       suits: "Heart",
       card: "2",
       color: "red",
       index: "2",
-      src: H2
+      src: H2,
+      cn: " invisible",
     },
     {
       suits: "Heart",
       card: "3",
       color: "red",
       index: "3",
-      src: H3
+      src: H3,
+      cn: " invisible",
     },
     {
       suits: "Heart",
       card: "4",
       color: "red",
       index: "4",
-      src: H4
+      src: H4,
+      cn: " invisible",
     },
     {
       suits: "Heart",
       card: "5",
       color: "red",
       index: "5",
-      src: H5
+      src: H5,
+      cn: " invisible",
     },
     {
       suits: "Heart",
       card: "6",
       color: "red",
       index: "6",
-      src: H6
+      src: H6,
+      cn: " invisible",
     },
     {
       suits: "Heart",
       card: "7",
       color: "red",
       index: "7",
-      src: H7
+      src: H7,
+      cn: " invisible",
     },
     {
       suits: "Heart",
       card: "8",
       color: "red",
       index: "8",
-      src: H8
+      src: H8,
+      cn: " invisible",
     },
     {
       suits: "Heart",
       card: "9",
       color: "red",
       index: "9",
-      src: H9
+      src: H9,
+      cn: " invisible",
     },
     {
       suits: "Heart",
       card: "10",
       color: "red",
       index: "10",
-      src: H10
+      src: H10,
+      cn: " invisible",
     },
     {
       suits: "Heart",
       card: "11",
       color: "red",
       index: "11",
-      src: H11
+      src: H11,
+      cn: " invisible",
     },
     {
       suits: "Heart",
       card: "12",
       color: "red",
       index: "12",
-      src: H12
+      src: H12,
+      cn: " invisible",
     },
     {
       suits: "Heart",
       card: "13",
       color: "red",
       index: "13",
-      src: H13
+      src: H13,
+      cn: " invisible",
     },
     {
       suits: "Diamond",
       card: "1",
       color: "red",
       index: "14",
-      src: D1
+      src: D1,
+      cn: " invisible",
     },
     {
       suits: "Diamond",
       card: "2",
       color: "red",
       index: "15",
-      src: D2
+      src: D2,
+      cn: " invisible",
     },
     {
       suits: "Diamond",
       card: "3",
       color: "red",
       index: "16",
-      src: D3
+      src: D3,
+      cn: " invisible",
     },
     {
       suits: "Diamond",
       card: "4",
       color: "red",
       index: "17",
-      src: D4
+      src: D4,
+      cn: " invisible",
     },
     {
       suits: "Diamond",
       card: "5",
       color: "red",
       index: "18",
-      src: D5
+      src: D5,
+      cn: " invisible",
     },
     {
       suits: "Diamond",
       card: "6",
       color: "red",
       index: "19",
-      src: D6
+      src: D6,
+      cn: " invisible",
     },
     {
       suits: "Diamond",
       card: "7",
       color: "red",
       index: "20",
-      src: D7
+      src: D7,
+      cn: " invisible",
     },
     {
       suits: "Diamond",
       card: "8",
       color: "red",
       index: "21",
-      src: D8
+      src: D8,
+      cn: " invisible",
     },
     {
       suits: "Diamond",
       card: "9",
       color: "red",
       index: "22",
-      src: D9
+      src: D9,
+      cn: " invisible",
     },
     {
       suits: "Diamond",
       card: "10",
       color: "red",
       index: "23",
-      src: D10
+      src: D10,
+      cn: " invisible",
     },
     {
       suits: "Diamond",
       card: "11",
       color: "red",
       index: "24",
-      src: D11
+      src: D11,
+      cn: " invisible",
     },
     {
       suits: "Diamond",
       card: "12",
       color: "red",
       index: "25",
-      src: D12
+      src: D12,
+      cn: " invisible",
     },
     {
       suits: "Diamond",
       card: "13",
       color: "red",
       index: "26",
-      src: D13
+      src: D13,
+      cn: " invisible",
     },
     {
       suits: "Club",
       card: "1",
       color: "black",
       index: "27",
-      src: C1
+      src: C1,
+      cn: " invisible",
     },
     {
       suits: "Club",
       card: "2",
       color: "black",
       index: "28",
-      src: C2
+      src: C2,
+      cn: " invisible",
     },
     {
       suits: "Club",
       card: "3",
       color: "black",
       index: "29",
-      src: C3
+      src: C3,
+      cn: " invisible",
     },
     {
       suits: "Club",
       card: "4",
       color: "black",
       index: "30",
-      src: C4
+      src: C4,
+      cn: " invisible",
     },
     {
       suits: "Club",
       card: "5",
       color: "black",
       index: "31",
-      src: C5
+      src: C5,
+      cn: " invisible",
     },
     {
       suits: "Club",
       card: "6",
       color: "black",
       index: "32",
-      src: C6
+      src: C6,
+      cn: " invisible",
     },
     {
       suits: "Club",
       card: "7",
       color: "black",
       index: "33",
-      src: C7
+      src: C7,
+      cn: " invisible",
     },
     {
       suits: "Club",
       card: "8",
       color: "black",
       index: "34",
-      src: C8
+      src: C8,
+      cn: " invisible",
     },
     {
       suits: "Club",
       card: "9",
       color: "black",
       index: "35",
-      src: C9
+      src: C9,
+      cn: " invisible",
     },
     {
       suits: "Club",
       card: "10",
       color: "black",
       index: "36",
-      src: C10
+      src: C10,
+      cn: " invisible",
     },
     {
       suits: "Club",
       card: "11",
       color: "black",
       index: "37",
-      src: C11
+      src: C11,
+      cn: " invisible",
     },
     {
       suits: "Club",
       card: "12",
       color: "black",
       index: "38",
-      src: C12
+      src: C12,
+      cn: " invisible",
     },
     {
       suits: "Club",
       card: "13",
       color: "black",
       index: "39",
-      src: C13
+      src: C13,
+      cn: " invisible",
     }, 
     {
       suits: "Spade",
       card: "1",
       color: "black",
       index: "40",
-      src: S1
+      src: S1,
+      cn: " invisible",
     },
     {
       suits: "Spade",
       card: "2",
       color: "black",
       index: "41",
-      src: S2
+      src: S2,
+      cn: " invisible",
     },
     {
       suits: "Spade",
       card: "3",
       color: "black",
       index: "42",
-      src: S3
+      src: S3,
+      cn: " invisible",
     },
     {
       suits: "Spade",
       card: "4",
       color: "black",
       index: "43",
-      src: S4
+      src: S4,
+      cn: " invisible",
     },
     {
       suits: "Spade",
       card: "5",
       color: "black",
       index: "44",
-      src: S5
+      src: S5,
+      cn: " invisible",
     },
     {
       suits: "Spade",
       card: "6",
       color: "black",
       index: "45",
-      src: S6
+      src: S6,
+      cn: " invisible",
     },
     {
       suits: "Spade",
       card: "7",
       color: "black",
       index: "46",
-      src: S7
+      src: S7,
+      cn: " invisible",
     },
     {
       suits: "Spade",
       card: "8",
       color: "black",
       index: "47",
-      src: S8
+      src: S8,
+      cn: " invisible",
     },
     {
       suits: "Spade",
       card: "9",
       color: "black",
       index: "48",
-      src: S9
+      src: S9,
+      cn: " invisible",
     },
     {
       suits: "Spade",
       card: "10",
       color: "black",
       index: "49",
-      src: S10
+      src: S10,
+      cn: " invisible",
     },
     {
       suits: "Spade",
       card: "11",
       color: "black",
       index: "50",
-      src: S11
+      src: S11,
+      cn: " invisible",
     },
     {
       suits: "Spade",
       card: "12",
       color: "black",
       index: "51",
-      src: S12
+      src: S12,
+      cn: " invisible",
     },
     {
       suits: "Spade",
       card: "13",
       color: "black",
       index: "52",
-      src: S13
+      src: S13,
+      cn: " invisible",
     }
   ];

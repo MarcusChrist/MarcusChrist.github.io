@@ -2,20 +2,32 @@ import React from 'react';
 
 import '../../assets/css/cards.css';
 import { unknownCard, initialState, deckArray } from '../../arrays/cards';
-import { CardMenu, Information, Stress } from './utils';
+import { CardMenu, InformationStress, Stress } from '../../shared/utils';
 import { loadCache, SuspenseImg, shuffle } from '../../shared/handleDecks';
 import stressReducer from '../../reducers/deckSlice';
 import { botAction, useInterval } from './bot';
+import { lock, unlock } from '../../shared/lock-1';
 
 function StressGame() {
   const [deck, dispatch] = React.useReducer(stressReducer, initialState) 
   const [liftedCard, setLiftedCard] = React.useState(null);
-  const [botLevel, setBotLevel] = React.useState(5000);
+  const [botLevel, setBotLevel] = React.useState(1);
   const [loading, setLoading] = React.useState(null);
-
+  const [fullscreen, setFullscreen] = React.useState(false);
+  
   let cancelled = false;
 
   React.useEffect(() => {
+    //saves botlevel and score, no need yet
+    // var tempPlayer = 0;
+    // var tempEnemy = 0;
+    // if (localStorage.getItem('stressBot')) {
+    //   setBotLevel(localStorage.getItem('stressBot'));
+    // }
+    // if (localStorage.getItem('stressPlayer') && localStorage.getItem('stressEnemy')) {
+    //   tempPlayer = Number(localStorage.getItem('stressPlayer'));
+    //   tempEnemy = Number(localStorage.getItem('stressEnemy'));
+    // }
     const tempImgs = deckArray.map((item) => {
       return (
         item.src
@@ -23,21 +35,44 @@ function StressGame() {
     });
     tempImgs.push(unknownCard.src);
     loadCache(tempImgs);
-  
     refresh(0,0);
+
+    //handles leave, no need yet
+    // window.addEventListener('beforeunload', alertUser);
+    // window.addEventListener('unload', handleEndConcert);
     return () => {
       cancelled = true;
+      // window.removeEventListener('beforeunload', alertUser);
+      // window.removeEventListener('unload', handleEndConcert);
+      //handleEndConcert();
     };
   }, []);
-  
-
+  function toggleFullScreen() {
+    if (fullscreen) {
+      unlock(setFullscreen);
+    } else {
+      lock(setFullscreen);
+    } 
+  }
   //validade cards in play for stress, new draw or gameover.
   React.useEffect(() => { 
     if (cancelled) return;
     if (deck.play && !deck.stress && !deck.draw && !deck.eventMsg) {
       checkCards(deck.cards);
     }
-  });
+  }); 
+
+  //Handles leave, no need yet
+  // const alertUser = e => {
+  //   e.preventDefault()
+  //   e.returnValue = ''
+  // }
+
+  // const handleEndConcert = async () => {
+  //   localStorage.setItem('stressBot', botLevel);
+  //   localStorage.setItem('stressPlayer', deck.score.player);
+  //   localStorage.setItem('stressEnemy', deck.score.enemy);
+  // }
 
   const refresh = (player, enemy) => {
     shuffle().then((result) => {
@@ -69,9 +104,10 @@ function StressGame() {
     if (deck.play && !deck.paused && !deck.draw && !deck.eventMsg && deck.cards[3] && deck.cards[4]) {
       botAction(deck.cards, moveCard, handleStress);
     }
-  }, botLevel);
+  }, botLevel === 1 ? 5000 : botLevel === 2 ? 3700 : botLevel === 3 ? 2400 : botLevel === 4 ? 1200 : 9999);
 
   const moveCard = (cardNr, type, target) => {
+    console.log("moveCard")
     dispatch({ type: 'deck/' + type, lifted: cardNr, target: target, card: cardNr});
     const temp = document.getElementById("card-" + cardNr);
     if (temp) {
@@ -81,7 +117,6 @@ function StressGame() {
       const faked = document.getElementsByClassName("move-" + cardNr);
       if (faked && faked[0]) {
         while(faked.length > 0){
-          console.log(faked);
           faked[0].classList.remove('move-' + cardNr);
         }
       }
@@ -89,6 +124,8 @@ function StressGame() {
   }
 
   const drop = (e) => {
+    
+    console.log("drop");
     e.preventDefault();
     removeFakedHover();
     if (!liftedCard || !deck.play) return;
@@ -104,9 +141,23 @@ function StressGame() {
 
   const checkCards = (list) => {
     //Checks if cards are valid for play or a draw needs to be set up.
-    if (!list[3] || !list[4]) return;
-    var target1 = Number(list[3].card);
-    var target2 = Number(list[4].card);
+
+
+
+    // if (!list[3] || !list[4]) return;
+    // var target1 = Number(list[3].card);
+    // var target2 = Number(list[4].card);
+
+
+
+
+    if (!list[3] && !list[4]) return;
+    var target1 = Number(list[3].card) || null;
+    var target2 = Number(list[4].card) || null;
+
+
+
+    
     if (target1 === target2 && target1 !== (undefined || null)) {
       //Stress starts if both targets are the same
       dispatch({ type: 'deck/setStress', stress: true });
@@ -131,30 +182,32 @@ function StressGame() {
         break;
       }
     }
+    if (!list[0] && !list[1] && !list[2]) {
+      //player have 0 cards left
+      gameOver("YOU WIN", {player: 1, enemy: 0});
+    } else if (!list[5] && !list[6] && !list[7]) {
+      //enemy has 0 cards left
+      gameOver("EPIC FAIL", {player: 0, enemy: 1});
+    } 
     if (!valid) {
-      if (!list[0] && !list[1] && !list[2]) {
-        //player have 0 cards left
-        gameOver("YOU WON", {player: 1, enemy: 0});
-      } else if (!list[5] && !list[6] && !list[7]) {
-        //enemy has 0 cards left
-        gameOver("EPIC FAIL", {player: 0, enemy: 1});
-      } else if (deck.myDeck.length < 1 && deck.yourDeck.length < 1) {
+      if (deck.myDeck.length < 1 && deck.yourDeck.length < 1) {
         //No valid cards in play and no more cards to draw: undecided victory //%% maybe change to replay?
         gameOver("Draw", {player: 0, enemy: 0});
       } else if (deck.myDeck.length < 1) {
         //no more cards to play and player deck is empty //%% should be changed to take 2 from enemy deck?
-        gameOver("YOU WON", {player: 1, enemy: 0});
+        gameOver("YOU WIN", {player: 1, enemy: 0});
       } else if (deck.yourDeck.length < 1) {
         //no more cards to play and enemy deck is empty //%% should be changed to take 2 from player deck?
         gameOver("EPIC FAIL", {player: 0, enemy: 1});
       } else {
         //if no stress, no valid cards and game can still be played, execute new Draw
         newDraw("No valid cards");
-      };
+      }
     };
   };
 
   const gameOver = (msg, score) => {
+    if (deck.eventMsg) return;
     dispatch({ type: 'deck/setEventMsg', eventMsg: msg });
     setTimeout(() => {
       for (var i = 0; i < 8; i++) {
@@ -192,20 +245,17 @@ function StressGame() {
         }
         if (temp2) {
           temp2.className = temp2.className.concat(' move-4');
-          console.log(temp2);
         }
         setTimeout(() => {
           const faked = document.getElementsByClassName("move-3");
           const faked2 = document.getElementsByClassName("move-4");
           if (faked && faked[0]) {
             while(faked.length > 0){
-              console.log(faked);
               faked[0].classList.remove('move-3');
             }
           }
           if (faked2 && faked2[0]) {
             while(faked2.length > 0){
-              console.log(faked2);
               faked2[0].classList.remove('move-4');
             }
           }
@@ -217,9 +267,6 @@ function StressGame() {
   const handlePause = () => {
     dispatch({ type: 'deck/handlePause' });
   }
-  const handleLevel = (level) => (e) => {
-    setBotLevel(level);
-  }
   const handleMyStress = e => {
     handleStress(true);
   }
@@ -227,6 +274,8 @@ function StressGame() {
     e.preventDefault();
   }
   const removeFakedHover = () => {
+    console.log("removefakeHover")
+    setLiftedCard(null);
     const faked = document.getElementsByClassName("fakedhover");
     if (faked && faked[0]) {
       while(faked.length > 0){
@@ -235,23 +284,22 @@ function StressGame() {
     }
   }
   const drag = (e) => {
+    console.log("drag");
     removeFakedHover();
-    e.target.className = e.target.className.concat(' fakedhover');
-    setLiftedCard(e.target.id);
+    if (e.target.id !== liftedCard) {
+      e.target.className = e.target.className.concat(' fakedhover');
+      setLiftedCard(e.target.id); 
+    }
   }
-  const showReport = () => {
-    console.log(deck);
-  }
+  
   const handleStart = e => {
-    // refresh(0,0)
     newDraw("Starting...");
     setLoading(3);
   }
-  const changeView = () => {
-    console.log(window);
-    console.log(window);
-    // window.history.replace('/tian');
-  }
+  function handleBotLevel(event, newValue) {
+    if (newValue === botLevel) return;
+    setBotLevel(newValue);
+  };
   function MiddleCards() {
     const temp = deck;
     return ( 
@@ -277,12 +325,14 @@ function StressGame() {
       </>
     )
   }
+  if (cancelled) return null;
   return (
     <div className="container">
       {!loading ? "" : <>
       { deck.stress ? <Stress handleMyStress={handleMyStress} /> : "" }
-      { deck.paused ? <Information handlePause={handlePause} /> : "" }
-      <CardMenu botLevel={botLevel} paused={deck.paused} handleLevel={handleLevel} handlePause={handlePause} changeView={changeView}/>
+      { deck.paused ? <InformationStress handlePause={handlePause} /> : "" }
+      <CardMenu botLevel={botLevel} paused={deck.paused} handleBotLevel={handleBotLevel} 
+        handlePause={handlePause} toggleFullScreen={toggleFullScreen} fullscreen={fullscreen} stressGame={true}/>
       <div className="scoreboard">{deck.score.player + " - " + deck.score.enemy}</div>
       {loading === 2 ? <div className="startbtn" onClick={handleStart}><div className="startbtndiv"><button><p>
         <span className="bg"></span><span className="base"></span><span className="text">Click here to start</span></p></button></div></div> : ""}
@@ -323,17 +373,17 @@ function StressGame() {
       <div className="row">
         <div className="card-element my">
           {deck.cards[0] ?
-          <SuspenseImg id={"card-0"} src={deck.cards[0].src} className="deckcard move invisible" alt="card" draggable="true" onDragStart={drag} onClick={drag} />
+          <SuspenseImg id={"card-0"} src={deck.cards[0].src} className="deckcard move invisible" alt="card" draggable="false" onClick={drag} />
             : ""}
         </div>
         <div className="card-element my">
           {deck.cards[1] ?
-          <SuspenseImg id={"card-1"} src={deck.cards[1].src} className="deckcard move invisible" alt="card" draggable="true" onDragStart={drag} onClick={drag} />
+          <SuspenseImg id={"card-1"} src={deck.cards[1].src} className="deckcard move invisible" alt="card" draggable="false" onClick={drag} />
              : ""} 
         </div>
         <div className="card-element my">
           {deck.cards[2] ?
-          <SuspenseImg id={"card-2"} src={deck.cards[2].src} className="deckcard move invisible" alt="card" draggable="true" onDragStart={drag} onClick={drag} />
+          <SuspenseImg id={"card-2"} src={deck.cards[2].src} className="deckcard move invisible" alt="card" draggable="false" onClick={drag} />
             : ""}
         </div>
       </div>

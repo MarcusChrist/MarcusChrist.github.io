@@ -1,17 +1,20 @@
 import React from 'react';
 
-import '../../assets/css/tian.css';
+import '../../assets/css/cards.css';
 import { unknownCard, initialStateTian, deckArray } from '../../arrays/cards';
-import { CardMenu, Information, MyPile, Pile, Target } from './utils';
+import { CardMenu, InformationTian, Pile, Target } from '../../shared/utils';
 import { loadCache, SuspenseImg, shuffle } from '../../shared/handleDecks';
 import tianReducer from '../../reducers/tianSlice';
+import { lock, unlock } from '../../shared/lock-1';
+
 // import { botAction, useInterval } from './bot';
 
 function TianGame() {
   const [deck, dispatch] = React.useReducer(tianReducer, initialStateTian) 
   const [liftedCard, setLiftedCard] = React.useState(null);
   const [botLevel, setBotLevel] = React.useState(5000);
-  const [loading, setLoading] = React.useState(null);
+  const [phase, setPhase] = React.useState(null);
+  const [fullscreen, setFullscreen] = React.useState(false);
 
   let cancelled = false;
 
@@ -46,10 +49,11 @@ function TianGame() {
     shuffle().then((result) => {
       if (cancelled) return;
       dispatch({ type: 'tian/shuffle', deck: result, player: player, enemy: enemy });
+      setLiftedCard(null);
     }).then(() => {
       if (cancelled) return;
-      setLoading(1);
-    })
+      setPhase(1);
+    })  
   }
 
   // useInterval(() => {
@@ -58,36 +62,50 @@ function TianGame() {
   //   }
   // }, botLevel);
 
+  function toggleFullScreen() {
+    if (fullscreen) {
+      unlock(setFullscreen);
+    } else {
+      lock(setFullscreen);
+    } 
+  }
+
   const moveDeckCard = (nr, last) => {
-    dispatch({ type: 'tian/moveToPile', nr: nr });
-    // console.log("pile-" + nr + "-" + (last - 1));
-    const temp = document.getElementById("pile-" + nr + "-" + last);
-    if (temp) {
-      temp.className = temp.className.concat(' move-' + nr).replace("invisible","");
-    }
-    console.log(temp);
-    setTimeout(() => {
-      const faked = document.getElementsByClassName("move-" + nr);
-      if (faked && faked[0]) {
-          faked[0].classList.remove('move-' + nr);
-      }
-    }, 90);
+    dispatch({ type: 'tian/moveToPile', nr: nr, last: last });
   }
 
   const drop = (e) => {
     e.preventDefault();
-    removeFakedHover();
-    if (!liftedCard || !deck.play) return;
-    var lifted = deck.cards[liftedCard.substr(5, 1)];
-    var target = deck.cards[e.target.id.substr(5, 1)];
-    if (!target) return;
+    console.log(liftedCard);
+    console.log(e.target.id);
+    if (!liftedCard || phase < 3 || !deck.piles[e.target.id.substr(5, 1)] || !deck.piles[e.target.id.substr(5, 1)][e.target.id.substr(7, 1)]) return;
+    if (liftedCard.substr(5, 1) === e.target.id.substr(5, 1)) {
+      setLiftedCard(null);
+      removeFakedHover();
+      return;
+    }
+    var lifted = deck.piles[liftedCard.substr(5, 1)][liftedCard.substr(7, 1)];
+    var target = deck.piles[e.target.id.substr(5, 1)][e.target.id.substr(7, 1)];
     var card1 = Number(lifted.card);
     var card2 = Number(target.card);
-    if (card1 + 1 === card2 || card1 - 1 === card2 || (card1 === 1 && card2 === 13) || (card1 === 13 && card2 === 1)) {
-      // moveCard(Number(liftedCard.substr(5, 1)), "putMyCard", Number(e.target.id.substr(5, 1)));
+    if (phase === 3 && card1 === card2) {
+      console.log("lägg på kortet")
+      //Lägg på kortet
+    } else if (phase === 3) {
+      console.log("Byt plats")
+      dispatch({ type: 'tian/swapPile', liftedPile: liftedCard.substr(5, 1), targetPile: e.target.id.substr(5, 1),
+        liftedCard: liftedCard.substr(7, 1), targetCard: e.target.id.substr(7, 1) });
+      setLiftedCard(null);
+      removeFakedHover();
+    } else {
+      console.log("fel phase")
     }
+      // if (card1 + 1 === card2 || card1 - 1 === card2 || (card1 === 1 && card2 === 13) || (card1 === 13 && card2 === 1)) {
+      //   console.log("för fas 4")
+      //   // moveCard(Number(liftedCard.substr(5, 1)), "putMyCard", Number(e.target.id.substr(5, 1)));
+      // }
   }
-
+  console.log(deck);
   const checkCards = (list) => {
     //Checks if cards are valid for play or a draw needs to be set up.
     if (!list[3] || !list[4]) return;
@@ -95,10 +113,10 @@ function TianGame() {
     var target2 = Number(list[4].card);
     if (target1 === target2 && target1 !== (undefined || null)) {
       //Stress starts if both targets are the same
-      dispatch({ type: 'deck/setStress', stress: true });
+      dispatch({ type: 'tian/setStress', stress: true });
       return;
     } else if (deck.stress) {
-      dispatch({ type: 'deck/setStress', stress: false });
+      dispatch({ type: 'tian/setStress', stress: false });
     }
     let valid = false;  
     for (var i = 0; i < 8; i++) {
@@ -135,13 +153,15 @@ function TianGame() {
         gameOver("EPIC FAIL", {player: 0, enemy: 1});
       } else {
         //if no stress, no valid cards and game can still be played, execute new Draw
-        newDraw("No valid cards");
+        // newDraw("No valid cards");
       };
     };
   };
-
+  const handleTest = () => {
+    dispatch({ type: 'tian/test' });
+  }
   const gameOver = (msg, score) => {
-    dispatch({ type: 'deck/setEventMsg', eventMsg: msg });
+    dispatch({ type: 'tian/setEventMsg', eventMsg: msg });
     setTimeout(() => {
       for (var i = 0; i < 8; i++) {
         if (i === 3) i = 5;
@@ -153,64 +173,12 @@ function TianGame() {
       refresh(score.player, score.enemy);
     }, 3000);
   }
-
-  const handleStress = (me) => {
-    if (!deck.stress || !deck.play) return;
-    if (me) {
-      dispatch({ type: 'deck/myStress' });
-      newDraw("Success");
-    } else {
-      dispatch({ type: 'deck/yourStress' });
-      newDraw("Fail");
-    }
-  }
-
-  const newDraw = (msg) => {
-    dispatch({ type: 'deck/setEventMsg', eventMsg: msg });
-    setTimeout(() => {
-      dispatch({ type: 'deck/newDeal' });
-      setTimeout(() => {
-        dispatch({ type: 'deck/play' });
-        const temp = document.getElementById("card-3-2")
-        const temp2 = document.getElementById("card-4-2")
-        if (temp) {
-          temp.className = temp.className.concat(' move-3');
-        }
-        if (temp2) {
-          temp2.className = temp2.className.concat(' move-4');
-          console.log(temp2);
-        }
-        setTimeout(() => {
-          const faked = document.getElementsByClassName("move-3");
-          const faked2 = document.getElementsByClassName("move-4");
-          if (faked && faked[0]) {
-            while(faked.length > 0){
-              console.log(faked);
-              faked[0].classList.remove('move-3');
-            }
-          }
-          if (faked2 && faked2[0]) {
-            while(faked2.length > 0){
-              console.log(faked2);
-              faked2[0].classList.remove('move-4');
-            }
-          }
-        }, 100);
-      }, 2600);
-    }, 2000);
-  }
   
   const handlePause = () => {
     dispatch({ type: 'tian/handlePause' });
   }
   const handleLevel = (level) => (e) => {
     setBotLevel(level);
-  }
-  const handleMyStress = e => {
-    handleStress(true);
-  }
-  const allowDrop = (e) => {
-    e.preventDefault();
   }
   const removeFakedHover = () => {
     const faked = document.getElementsByClassName("fakedhover");
@@ -222,15 +190,25 @@ function TianGame() {
   }
   const drag = (e) => {
     removeFakedHover();
-    e.target.className = e.target.className.concat(' fakedhover');
-    setLiftedCard(e.target.id);
+    if (e.target.id === liftedCard) {
+      setLiftedCard(null);
+    } else {
+      e.target.className = e.target.className.concat(' fakedhover');
+      setLiftedCard(e.target.id); 
+    }
   }
-  const showReport = () => {
-    console.log(deck);
+
+  const allowDrop = e => {
+    e.preventDefault();
   }
+  
   const handleStart = e => {
-    setLoading(2);
-    dispatch({ type: 'deck/setEventMsg', eventMsg: "Phase One" });
+    if (phase === 3) {
+      setPhase(4);
+      return;
+    }
+    setPhase(2);
+    dispatch({ type: 'tian/setEventMsg', eventMsg: "Phase One" });
     setTimeout(() => {
       var z = 0;
       for (let i = 0; i < 18; i++) {
@@ -249,22 +227,24 @@ function TianGame() {
             y = 1;
           }
           moveDeckCard(x, y);
-        }, i * 300);
+        }, i * 11); //300
       }
       setTimeout(() => {
-        setLoading(3);
-      }, 5200);
-    }, 2000);
+        dispatch({ type: 'tian/setEventMsg', eventMsg: null });
+        setPhase(3);
+      }, 111); //5200
+    }, 111); //2000
   }
-  console.log(deck);
+
   return (
     <div className="container">
-      {!loading ? "" : <>
-      { deck.paused ? <Information handlePause={handlePause} /> : "" }
-      <CardMenu botLevel={botLevel} paused={deck.paused} handleLevel={handleLevel} handlePause={handlePause}/>
+      {!phase ? "" : <>
+      { deck.paused ? <InformationTian handlePause={handlePause} /> : "" }
+      <CardMenu botLevel={botLevel} paused={deck.paused} handleLevel={handleLevel} handlePause={handlePause} 
+        toggleFullScreen={toggleFullScreen} fullscreen={fullscreen} stressGame={false}/>
       <div className="scoreboard">{deck.score.player + " - " + deck.score.enemy}</div>
-      {loading === 1 || loading === 3 ? <div className="startbtn" onClick={handleStart}><div className="startbtndiv"><button><p>
-        <span className="bg"></span><span className="base"></span><span className="text">{loading === 1 ? "Start phase one" : "Start phase two"} </span></p></button></div></div> : ""}
+      {phase === 1 || phase === 3 ? <div className="startbtn" onClick={handleStart}><div className="startbtndiv"><button><p>
+        <span className="bg"></span><span className="base"></span><span className="text">{phase === 1 ? "Start phase one" : "Start phase two"} </span></p></button></div></div> : ""}
       {deck.eventMsg ? <div className="eventmsg">{deck.eventMsg}</div> : ""}
       <div className="row">
         <div className="card-element">
@@ -290,36 +270,38 @@ function TianGame() {
       </div>
       <div className="row">
         <div className="deck card-element sidedecks">
+        {/* <SuspenseImg src={unknownCard.src} key={"deck-" + 0} id={"deck-" + 0} className="deckcard" style={{marginTop: "-" + (0 * 2) + "px", marginLeft: "-" + 0 + "px"}} alt="card" draggable="false" /> */}
+           
           {deck.deck.length > 0 ? deck.deck.map((item, i) => {
             return <SuspenseImg src={unknownCard.src} key={"deck-" + i} id={"deck-" + i} className="deckcard" style={{marginTop: "-" + (i * 2) + "px", marginLeft: "-" + i + "px"}} alt="card" draggable="false" />
             })
           : ""}
         </div>
-        <Target allowDrop={allowDrop} drop={drop} target={deck.target}/>
+        <Target drop={drop} target={deck.target} allowDrop={allowDrop}/>
         <div className="card-element">
         </div>
         <div className="card-element">
         </div>
       </div>
       <div className="row">
-        <div className="card-element my" id="myPile-0">
+        <div className="card-element my" id="myPile-0" onClick={drop}>
           {deck.piles[0] ?
             <Pile nr="0" pile={deck.piles[0]} drag={drag}/>
             : ""}
         </div>
-        <div className="card-element my" id="myPile-1">
+        <div className="card-element my" id="myPile-1" onClick={drop}>
           {deck.piles[1] ?
             <Pile nr="1" pile={deck.piles[1]} drag={drag}/>
             : ""}
         </div>
-        <div className="card-element my" id="myPile-2">
+        <div className="card-element my" id="myPile-2" onClick={drop}>
           {deck.piles[2] ?
             <Pile nr="2" pile={deck.piles[2]} drag={drag}/>
             : ""}
         </div>
-        <div className="card-element my" id="myPile-6">
+        <div className="card-element my" id="myPile-6" onClick={drop}>
           {deck.piles[6] ?
-            <MyPile nr="6" pile={deck.piles[6]} drag={drag}/>
+            <Pile nr="6" pile={deck.piles[6]} drag={drag} myPile={true}/>
             : ""}
         </div>
       </div>

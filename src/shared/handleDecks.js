@@ -1,4 +1,4 @@
-import { deckArray, unknownCard } from "../arrays/cards";
+import { deckArray } from "../arrays/cards";
 
 
 export const shuffle = async () => {
@@ -26,7 +26,6 @@ const imgCache = {
         };
         img.src = src;
         }).then((img) => {
-            console.log("nu!")
             this.__cache[src] = true;
         });
     }
@@ -44,5 +43,5 @@ export const loadCache = (images) => {
 
 export const SuspenseImg = ({ src, ...rest }) => {
     imgCache.read(src);
-    return <img src={src} {...rest} />;
+    return <img src={src} {...rest} alt="card"/>;
 };

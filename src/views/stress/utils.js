@@ -3,6 +3,7 @@ import React from 'react';
 import { unknownCard } from '../../arrays/cards';
 import '../../assets/css/cards.css';
 import { Route } from 'react-router-dom'
+import ContinuousSlider from '../../components/customSlider';
 
 const ChangeGameButton = () => (
   <Route render={({ history }) => (
@@ -21,13 +22,10 @@ export class CardMenu extends React.Component {
         {/* <button onClick={showReport}>{"my s: " + deck.mySlop.length + " your s: " + deck.yourSlop.length + " my: " + deck.myDeck.length + " y: " + deck.yourDeck.length +
           " c: " + deck.cards.length + " total: " + (deck.mySlop.length + deck.yourSlop.length + deck.myDeck.length + deck.yourDeck.length + deck.cards.length)}</button> */}
         
-        <ChangeGameButton/>
+        {/* <ChangeGameButton /> */}
+        <button className={this.props.fullscreen ? "btnpressed" : ""} onClick={this.props.toggleFullScreen}>Fullscreen</button>
         <button className={this.props.paused ? "btnpressed btnpaused" : ""} onClick={this.props.handlePause}>Information</button>
-        <button className={this.props.botLevel === 5000 ? "btnpressed" : ""} onClick={this.props.handleLevel(5000)}>Easy</button>
-        <button className={this.props.botLevel === 3700 ? "btnpressed" : ""} onClick={this.props.handleLevel(3700)}>Medium</button>
-        <button className={this.props.botLevel === 2400 ? "btnpressed" : ""} onClick={this.props.handleLevel(2400)}>Hard</button>
-        <button className={this.props.botLevel === 1100 ? "btnpressed" : ""} onClick={this.props.handleLevel(1100)}>Extreme</button>
-
+        <ContinuousSlider botLevel={this.props.botLevel} handleLevel={this.props.handleLevel}/>
       </div> 
     )
   }
