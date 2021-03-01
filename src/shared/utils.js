@@ -25,6 +25,7 @@ export class InformationTian extends React.Component {
             <br /><br /><h3>Goal</h3>
             To get rid of all your cards first.
             <br /><h2>Click anywhere to unpause.</h2>
+            
           <br /><br /> <br /><br /></span>
       </div>
     )
@@ -72,7 +73,7 @@ const ChangeGameToTian = () => (
     <button
       onClick={() => {
         alert("That game is not done yet! You have to keep playing stress.")
-        // history.push('/tian');
+        history.push('/tian');
       }}
     >
       Play Tian
@@ -141,7 +142,7 @@ export const CardMenu = (props) => {
       <div></div>
       <button className={fullscreen ? "btnpressed" : ""} onClick={toggleFullScreen}>Fullscreen</button>
       <button className={paused ? "btnpressed btnpaused" : ""} onClick={handlePause}>Information</button>
-      {stressGame ? <ChangeGameToTian /> : <ChangeGameToStress />}
+      {/* {stressGame ? <ChangeGameToTian /> : <ChangeGameToStress />} */}
     </div>
   )
 }
