@@ -14,9 +14,9 @@ ReactDOM.render(
   // document.getElementById('root')
     <BrowserRouter>
       <Switch>
-        <Route exact path="/tian" render= {(props)=>{ return <TianGame {...props}/>}} />
-        <Route exact path="/stress" render= {(props)=>{ return <StressGame {...props}/>}}/>
-        <Redirect from="/" to="/stress" render= {(props)=>{ return <StressGame {...props}/>}}/> 
+        {/* <Route exact path="/tian" render= {(props)=>{ return <TianGame {...props}/>}} /> */}
+        <Route exact path="/" render= {(props)=>{ return <StressGame {...props}/>}}/>
+        <Redirect from="*" to="/" render= {(props)=>{ return <StressGame {...props}/>}}/> 
         {/* <Route path="/admin" render={(props) => <Layout {...props} />} />
         <Redirect from="/" to="/admin/dashboard" /> */}
       </Switch>
